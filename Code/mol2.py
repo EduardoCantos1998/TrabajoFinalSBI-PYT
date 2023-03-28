@@ -25,7 +25,7 @@ class Protein:
                     write = False
                 if write:
                     atoms = line.split()
-                    struct.append([atoms[2],atoms[3],atoms[4]])
+                    struct.append((atoms[2],atoms[3],atoms[4]))
         return struct
 
     def get_cavity(self):
@@ -40,7 +40,7 @@ class Protein:
                     write = False
                 if write:
                     atoms = line.split()
-                    struct.append([atoms[2],atoms[3],atoms[4]])
+                    struct.append((atoms[2],atoms[3],atoms[4]))
         return struct
 
     def get_site(self):
@@ -55,7 +55,7 @@ class Protein:
                     write = False
                 if write:
                     atoms = line.split()
-                    struct.append([atoms[2],atoms[3],atoms[4]])
+                    struct.append((atoms[2],atoms[3],atoms[4]))
         return struct
 
     def __hash__(self):
@@ -72,5 +72,4 @@ for i in structures:
 
     cur_prot = Protein(i, protein, cavity, site)
     
-    print(cur_prot.get_protein())
 
