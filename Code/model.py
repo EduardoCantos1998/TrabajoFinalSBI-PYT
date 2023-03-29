@@ -15,14 +15,14 @@ for i in os.listdir(files):
 
 features = {}
 
-def get_distances(X):
-    distances = np.zeros((len(X),len(X)))
+def get_distances(X, Y=None):
+    if Y == None:
+        Y=X
+    distances = np.zeros((len(X),len(Y)))
     for i, coord1 in enumerate(X):
-        for j, coord2 in enumerate(X):
+        for j, coord2 in enumerate(Y):
             distances[i,j] = np.linalg.norm(coord1-coord2)
     return distances
-
-mol2
 
 for i in structures:
     cur_feat = {}
