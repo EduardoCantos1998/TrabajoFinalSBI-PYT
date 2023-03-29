@@ -65,7 +65,7 @@ class Protein():
                     write = False
                 if write and line.split()[1] == "CB":
                     atoms = line.split()
-                    struct.append([float(atoms[2]),float(atoms[3]),float(atoms[4]), atoms[7]])
+                    struct.append([float(atoms[2]),float(atoms[3]),float(atoms[4])])
         np_protein = np.matrix(struct)
         return np_protein
 
@@ -131,7 +131,7 @@ class Protein():
                     write = False
                 if write and line.split()[1] == "CB":
                     atoms = line.split()
-                    struct.append([float(atoms[2]),float(atoms[3]),float(atoms[4]), atoms[7]])
+                    struct.append([float(atoms[2]),float(atoms[3]),float(atoms[4])])
         np_site = np.matrix(struct)
         return np_site
 

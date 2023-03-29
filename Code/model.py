@@ -15,9 +15,14 @@ for i in os.listdir(files):
 
 features = {}
 
-def get_distances(X, Y=None):
-    if Y == None:
-        Y=X
+def get_distances(X):
+    distances = np.zeros((len(X),len(X)))
+    for i, coord1 in enumerate(X):
+        for j, coord2 in enumerate(X):
+            distances[i,j] = np.linalg.norm(coord1-coord2)
+    return distances
+
+def get_distances2(X,Y):
     distances = np.zeros((len(X),len(Y)))
     for i, coord1 in enumerate(X):
         for j, coord2 in enumerate(Y):
@@ -37,8 +42,8 @@ for i in structures:
     protein_distance = get_distances(cur_prot.get_protein())   
     cavity_distance = get_distances(cur_prot.get_cavity())   
     site_distance = get_distances(cur_prot.get_site())   
-    ligand_distance = get_distances(cur_prot.get_ligand())   
-    
+    site_ligand_dist = get_distances2(cur_prot.get_ligand(), cur_prot.get_siteCB())
+
     # Transform the matrix into tensors
     cur_feat["protein_TENSOR"] = torch.from_numpy(cur_prot.get_protein())
     cur_feat["cavity_TENSOR"] = torch.from_numpy(cur_prot.get_cavity())
@@ -48,6 +53,7 @@ for i in structures:
     cur_feat["cavity_DISTANCES"] = torch.from_numpy(cavity_distance)
     cur_feat["site_DISTANCES"] = torch.from_numpy(site_distance)
     cur_feat["ligand_DISTANCES"] = torch.from_numpy(ligand_distance)
+    cur_feat["site_ligand_DISTANCES"] = torch.from_numpy(site_ligand_dist)
     # Save each feature in the dictionary
     features[i] = cur_feat
 
