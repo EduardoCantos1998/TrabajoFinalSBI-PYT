@@ -41,9 +41,13 @@ print(f"{len(pdb_codes)} files found.")
 print("Starting download")
 for code in set(pdb_codes):
     pdb_url = f"https://files.rcsb.org/download/{code}.pdb"
-    pdb_path = f"PDB/{code}.pdb"
-    if f"{code}.pdb" not in os.listdir("PDB/"):
+    fa_url = f"https://www.rcsb.org/fasta/entry/{code}"
+    pdb_path = f"PDB/{code}/{code}.pdb"
+    fa_path = f"PDB/{code}/{code}.fa"
+    if f"{code}" not in os.listdir("PDB/"):
+        os.mkdir(f"PDB/{code}")
         urllib.request.urlretrieve(pdb_url, pdb_path)
+        urllib.request.urlretrieve(fa_url, fa_path)
         print(f"PDB file {code} downloaded and saved to {pdb_path}")
     else:
         print(f"PDB file {code} already found in {pdb_path}")
