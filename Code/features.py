@@ -86,10 +86,10 @@ for i in structures:
     cur_feat["cavity_DISTANCES"] = torch.from_numpy(cavity_distance)
     cur_feat["site_DISTANCES"] = torch.from_numpy(site_distance)
     cur_feat["site_ligand_DISTANCES"] = torch.from_numpy(site_ligand_dist)
-    cur_feat["protein_PHI"] = torch.from_numpy(protein_angles_phi)
-    cur_feat["protein_PSI"] = torch.from_numpy(protein_angles_psi)
-    cur_feat["site_PHI"] = torch.from_numpy(site_angles_phi)
-    cur_feat["site_PSI"] = torch.from_numpy(site_angles_psi)
+    cur_feat["protein_PHI"] = torch.tensor(protein_angles_phi)
+    cur_feat["protein_PSI"] = torch.tensor(protein_angles_psi)
+    cur_feat["site_PHI"] = torch.tensor(site_angles_phi)
+    cur_feat["site_PSI"] = torch.tensor(site_angles_psi)
 
     # Save each feature in the dictionary
     features[i] = cur_feat
