@@ -82,9 +82,9 @@ def extract_features(data):
 
         # Calculate the distances
         print("Calculating distances.")
-        # protein_distance = get_distances(cur_prot.get_protein())   
+        protein_distance = get_distances(cur_prot.get_proteinCA())   
         cavity_distance = get_distances(cur_prot.get_cavity())   
-        # site_distance = get_distances(cur_prot.get_site())   
+        site_distance = get_distances(cur_prot.get_siteCA())   
         site_ligand_dist = get_distances2(cur_prot.get_ligand(), cur_prot.get_siteCB())
 
         # Calculate the angles
@@ -98,9 +98,9 @@ def extract_features(data):
         cur_feat["cavity_TENSOR"] = torch.from_numpy(cur_prot.get_cavity())
         cur_feat["site_TENSOR"] = torch.from_numpy(cur_prot.get_site())
         cur_feat["ligand_TENSOR"] = torch.from_numpy(cur_prot.get_ligand())
-        # cur_feat["protein_DISTANCES"] = torch.from_numpy(protein_distance)
+        cur_feat["proteinCA_DISTANCES"] = torch.from_numpy(protein_distance)
         cur_feat["cavity_DISTANCES"] = torch.from_numpy(cavity_distance)
-        # cur_feat["site_DISTANCES"] = torch.from_numpy(site_distance)
+        cur_feat["siteCA_DISTANCES"] = torch.from_numpy(site_distance)
         cur_feat["site_ligand_DISTANCES"] = torch.from_numpy(site_ligand_dist)
         cur_feat["protein_PHI"] = torch.tensor(protein_angles_phi)
         cur_feat["protein_PSI"] = torch.tensor(protein_angles_psi)
@@ -116,8 +116,10 @@ def extract_features(data):
 
 data = extract_features(random_files)
 
-print("Saving into file.")
-out_fd = open("features.p", "wb")
+file_name = "features.pckl"
+
+print(f"Saving into file '{file_name}'.")
+out_fd = open(file_name, "wb")
 
 pickle.dump(data, out_fd)
 
