@@ -1,6 +1,7 @@
 import data_preparation as dp
 import torch
 from tqdm import tqdm
+import pickle
 
 model = MyModel()
 
@@ -31,3 +32,6 @@ for epoch in range(num_epochs):
 
     # Imprimimos la tasa de pérdida en cada época
     print(f"Epoch {epoch}, train loss: {train_loss/len(dp.train_loader)}, val loss: {val_loss/len(dp.val_loader)}")
+
+with open("model.p", "wb") as fl:
+    pickle.dump(model, fl)

@@ -1,7 +1,11 @@
 import torch
 from torch.utils.data import Dataset, DataLoader
 from sklearn.model_selection import train_test_split
-import features as ft
+import pickle
+import os
+
+with open("features.p", "rb") as f:
+    features = pickle.load(f)
 
 class ProteinDataset(Dataset):
     def __init__(self, features):
@@ -30,16 +34,15 @@ class ProteinDataset(Dataset):
         return sample
 
 # Dividimos los datos en conjuntos de entrenamiento, validación y prueba
-train_data, test_data = train_test_split(list(ft.structures.keys()), test_size=0.2, random_state=42)
+train_data, test_data = train_test_split(list(features.keys()), test_size=0.2, random_state=42)
 train_data, val_data = train_test_split(train_data, test_size=0.2, random_state=42)
 
 # Creamos las instancias de ProteinDataset para cada conjunto
-train_set = ProteinDataset({k: v for k, v in ft.features.items() if k in train_data})
-val_set = ProteinDataset({k: v for k, v in ft.features.items() if k in val_data})
-test_set = ProteinDataset({k: v for k, v in ft.features.items() if k in test_data})
+train_set = ProteinDataset({k: v for k, v in features.items() if k in train_data})
+val_set = ProteinDataset({k: v for k, v in features.items() if k in val_data})
+test_set = ProteinDataset({k: v for k, v in features.items() if k in test_data})
 
 # Creamos las instancias de DataLoader para cada conjunto
 train_loader = DataLoader(train_set, batch_size=32, shuffle=True)
 val_loader = DataLoader(val_set, batch_size=32, shuffle=False)
 test_loader = DataLoader(test_set, batch_size=32, shuffle=False)
-
