@@ -2,7 +2,6 @@
 
 from Bio.PDB import PDBParser
 import numpy as np
-import torch
 import sys
 
 try:
@@ -20,6 +19,4 @@ for model in structure:
             for atom in residue:
                 coords.append(atom.get_coord())
 
-coords = np.matrix(coords)
-coords_TENSOR = torch.from_numpy(coords)
-print(coords_TENSOR)
+print(coords)
