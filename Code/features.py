@@ -62,64 +62,81 @@ def get_angles(coords):
 
     return phi, psi
 
-def extract_features(data):
-    cur = 1
-    print(f"################################# {cur}/{len(data)}")
-    for i in data:
-        print(f"Now processing: {i}")
-        cur_feat = {}
-        print(f"Loading protein.")
-        protein = f"{files}{i}/{structures[i][0]}"
-        print(f"Loading cavity.")
-        cavity = f"{files}{i}/{structures[i][-1]}"
-        print(f"Loading site.")
-        site = f"{files}{i}/{structures[i][1]}"
-        print(f"Loading ligand.")
-        ligand = f"{files}{i}/{structures[i][2]}"
+if __name__ == "__main__":
 
-        print("Creating Protein instance.")
-        cur_prot = mol2.Protein(i, protein, cavity, site, ligand)
-
-        # Calculate the distances
-        print("Calculating distances.")
-        # protein_distance = get_distances(cur_prot.get_protein())   
-        cavity_distance = get_distances(cur_prot.get_cavity())   
-        # site_distance = get_distances(cur_prot.get_site())   
-        site_ligand_dist = get_distances2(cur_prot.get_ligand(), cur_prot.get_siteCB())
-
-        # Calculate the angles
-        print("Calculating angles.")
-        protein_angles_phi, protein_angles_psi = get_angles(cur_prot.get_proteinCA())  
-        site_angles_phi, site_angles_psi = get_angles(cur_prot.get_siteCA())  
-
-        # Transform the matrix into tensors
-        print("Transforming data to tensors.")
-        cur_feat["protein_TENSOR"] = torch.from_numpy(cur_prot.get_protein())
-        cur_feat["cavity_TENSOR"] = torch.from_numpy(cur_prot.get_cavity())
-        cur_feat["site_TENSOR"] = torch.from_numpy(cur_prot.get_site())
-        cur_feat["ligand_TENSOR"] = torch.from_numpy(cur_prot.get_ligand())
-        # cur_feat["protein_DISTANCES"] = torch.from_numpy(protein_distance)
-        cur_feat["cavity_DISTANCES"] = torch.from_numpy(cavity_distance)
-        # cur_feat["site_DISTANCES"] = torch.from_numpy(site_distance)
-        cur_feat["site_ligand_DISTANCES"] = torch.from_numpy(site_ligand_dist)
-        cur_feat["protein_PHI"] = torch.tensor(protein_angles_phi)
-        cur_feat["protein_PSI"] = torch.tensor(protein_angles_psi)
-        cur_feat["site_PHI"] = torch.tensor(site_angles_phi)
-        cur_feat["site_PSI"] = torch.tensor(site_angles_psi)
-
-        # Save each feature in the dictionary
-        print(f"Saving features: {i}")
-        features[i] = cur_feat
-        cur += 1 
+    def extract_features(data):
+        cur = 1
         print(f"################################# {cur}/{len(data)}")
-    return features
+        for i in data:
+            print(f"Now processing: {i}")
+            cur_feat = {}
+            print(f"Loading protein.")
+            protein = f"{files}{i}/{structures[i][0]}"
+            print(f"Loading cavity.")
+            cavity = f"{files}{i}/{structures[i][-1]}"
+            print(f"Loading site.")
+            site = f"{files}{i}/{structures[i][1]}"
+            print(f"Loading ligand.")
+            ligand = f"{files}{i}/{structures[i][2]}"
 
-data = extract_features(random_files)
+            print("Creating Protein instance.")
+            cur_prot = mol2.Protein(i, protein, cavity, site, ligand)
 
-print("Saving into file.")
-out_fd = open("features.p", "wb")
+            ## Calculate the distances
+            print("Calculating distances.")
+            protein_distance = get_distances(cur_prot.get_proteinCA())   
+            cavity_distance = get_distances2(cur_prot.get_cavity(), cur_prot.get_siteCB())   
+            site_distance = get_distances(cur_prot.get_siteCA())   
+            site_ligand_dist = get_distances2(cur_prot.get_ligand(), cur_prot.get_siteCB())
 
-pickle.dump(data, out_fd)
+            ## Calculate the angles
+            print("Calculating angles.")
+            protein_angles_phi, protein_angles_psi = get_angles(cur_prot.get_proteinCA())  
+            site_angles_phi, site_angles_psi = get_angles(cur_prot.get_siteCA())  
 
-out_fd.close()
-print("Done.")
+            ## Transform the matrix into tensors
+            #print("Transforming data to tensors.")
+            #cur_feat["protein_TENSOR"] = protein_TENSOR
+            #cur_feat["cavity_TENSOR"] = cavity_TENSOR 
+            #cur_feat["site_TENSOR"] = site_TENSOR   
+            #cur_feat["ligand_TENSOR"] = ligand_TENSOR 
+            #cur_feat["proteinCA_DISTANCES"] = torch.from_numpy(protein_distance)
+            #cur_feat["cavity_DISTANCES"] = torch.from_numpy(cavity_distance)
+            #cur_feat["siteCA_DISTANCES"] = torch.from_numpy(site_distance)
+            #cur_feat["site_ligand_DISTANCES"] = torch.from_numpy(site_ligand_dist)
+            #cur_feat["protein_PHI"] = torch.tensor(protein_angles_phi)
+            #cur_feat["protein_PSI"] = torch.tensor(protein_angles_psi)
+            #cur_feat["site_PHI"] = torch.tensor(site_angles_phi)
+            #cur_feat["site_PSI"] = torch.tensor(site_angles_psi)
+            cur_feat["PROTEIN"] = cur_prot.get_protein()
+            cur_feat["CAVITY"] = cur_prot.get_cavity()
+            cur_feat["LIGAND"] = cur_prot.get_ligand()
+            cur_feat["SITE"] = cur_prot.get_site()
+            cur_feat["proteinCA_DISTANCES"] = protein_distance
+            cur_feat["cavity_site_distance"] = cavity_distance
+            cur_feat["siteCA_DISTANCES"] = site_distance
+            cur_feat["ligand_site_DISTANCES"] = site_ligand_dist
+            cur_feat["protein_PHI"] = protein_angles_phi
+            cur_feat["protein_PSI"] = protein_angles_psi
+            cur_feat["site_PHI"] = site_angles_phi
+            cur_feat["site_PSI"] = site_angles_psi
+
+            # Save each feature in the dictionary
+            print(f"Saving features: {i}")
+            features[i] = cur_feat
+            cur += 1 
+            print(f"################################# {cur}/{len(data)}")
+        return features
+
+    data = extract_features(random_files)
+
+    file_name = input("Please write a name for the file.")
+    file_name = file_name + ".pckl"
+
+    print(f"Saving into file '{file_name}'.")
+    out_fd = open(file_name, "wb")
+
+    pickle.dump(data, out_fd)
+
+    out_fd.close()
+    print("Done.")

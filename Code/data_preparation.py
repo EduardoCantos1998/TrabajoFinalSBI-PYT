@@ -1,12 +1,16 @@
 import torch
 from torch.utils.data import Dataset, DataLoader
 from sklearn.model_selection import train_test_split
-from random import sample
 import pickle
-import os
 
-with open("features.p", "rb") as f:
+with open("features.pckl", "rb") as f:
     features = pickle.load(f)
+
+print(features["2ijg_2"]["site_ligand_DISTANCES"])
+
+# for i in features:
+#    for j in features[i]:
+#        print(f"Protein '{i}', Feature '{j}': ",features[i][j].numel())
 
 class ProteinDataset(Dataset):
     def __init__(self, features):
@@ -23,14 +27,14 @@ class ProteinDataset(Dataset):
             "cavity_TENSOR": self.features[protein]["cavity_TENSOR"],
             "site_TENSOR": self.features[protein]["site_TENSOR"],
             "ligand_TENSOR": self.features[protein]["ligand_TENSOR"],
-            "protein_DISTANCES": self.features[protein]["protein_DISTANCES"],
-            "cavity_DISTANCES": self.features[protein]["cavity_DISTANCES"],
-            "site_DISTANCES": self.features[protein]["site_DISTANCES"],
-            "site_ligand_DISTANCES": self.features[protein]["site_ligand_DISTANCES"],
-            "protein_PHI": self.features[protein]["protein_PHI"],
-            "protein_PSI": self.features[protein]["protein_PSI"],
-            "site_PHI": self.features[protein]["site_PHI"],
-            "site_PSI": self.features[protein]["site_PSI"]
+            #"proteinCA_DISTANCES": self.features[protein]["proteinCA_DISTANCES"],
+            #"cavity_DISTANCES": self.features[protein]["cavity_DISTANCES"],
+            #"siteCA_DISTANCES": self.features[protein]["siteCA_DISTANCES"],
+            #"site_ligand_DISTANCES": self.features[protein]["site_ligand_DISTANCES"],
+            #"protein_PHI": self.features[protein]["protein_PHI"],
+            #"protein_PSI": self.features[protein]["protein_PSI"],
+            #"site_PHI": self.features[protein]["site_PHI"],
+            #"site_PSI": self.features[protein]["site_PSI"]
         }
         return sample
 

@@ -1,37 +1,52 @@
 import data_preparation as dp
 import torch
-from tqdm import tqdm
 import pickle
+import torch.nn as nn
+import torch.optim as optim
+from tqdm import tqdm
 
-model = MyModel()
+class CNN1D(nn.Module):
+    def __init__(self, input_dim, hidden_dim, output_dim, kernel_size, stride):
+        super(CNN1D, self).__init__()
+        self.conv1d = nn.Conv1d(input_dim, hidden_dim, kernel_size=kernel_size, stride=stride)
+        self.maxpool1d = nn.MaxPool1d(kernel_size=2, stride=2)
+        self.linear1 = nn.Linear(hidden_dim * (sequence_length // 2), output_dim)
 
-num_epochs = 10
-criterion = torch.nn.MSELoss()  # Función de pérdida
-optimizer = torch.optim.Adam(model.parameters(), lr=0.001)  # Optimizador
+    def forward(self, x):
+        x = self.conv1d(x)
+        x = nn.functional.relu(x)
+        x = self.maxpool1d(x)
+        x = x.view(x.size(0), -1)
+        x = self.linear1(x)
+        return x
+        
+# Definir los parámetros
+input_dim = 12
+hidden_dim = 32
+output_dim = 1
+kernel_size = 3
+stride = 1
+learning_rate = 0.001
+num_epochs = 100
 
+# Crear el modelo y definir la función de pérdida y el optimizador
+model = CNN1D(input_dim, hidden_dim, output_dim, kernel_size, stride)
+criterion = nn.MSELoss()
+optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+
+# Entrenamiento
 for epoch in range(num_epochs):
-    # Entrenamiento
-    model.train()
-    for batch in dp.train_loader:
-        inputs = batch
-        labels = ... # Calculamos las etiquetas para el conjunto de entrenamiento
+    train_loss = 0
+    for i, data in enumerate(dp.train_loader, 0):
+        inputs, labels = data
+        optimizer.zero_grad()
         outputs = model(inputs)
-        loss = criterion(outputs, labels)  # Calculamos la función de pérdida
+        loss = criterion(outputs, labels)
         loss.backward()
         optimizer.step()
-        optimizer.zero_grad()
+        train_loss += loss.item()
+    train_loss /= len(dp.train_loader)
+    print(f"Epoch {epoch+1}/{num_epochs}, Training Loss: {train_loss:.4f}")
 
-    # Validación
-    model.eval()
-    with torch.no_grad():
-        for batch in dp.val_loader:
-            inputs = batch
-            labels = ... # Calculamos las etiquetas para el conjunto de validación
-            outputs = model(inputs)
-            val_loss = criterion(outputs, labels)  # Calculamos la función de pérdida en el conjunto de validación
-
-    # Imprimimos la tasa de pérdida en cada época
-    print(f"Epoch {epoch}, train loss: {train_loss/len(dp.train_loader)}, val loss: {val_loss/len(dp.val_loader)}")
-
-with open("model.p", "wb") as fl:
-    pickle.dump(model, fl)
+#with open("model.pckl", "wb") as fl:
+#    pickle.dump(model, fl)
