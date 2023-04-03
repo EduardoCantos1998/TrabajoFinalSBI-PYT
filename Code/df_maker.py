@@ -2,6 +2,7 @@ import mol2
 import freesasa
 import pandas as pd
 import numpy as np
+import math
 from Bio.PDB.PDBParser import PDBParser
 from Bio.PDB.Polypeptide import PPBuilder
 from Bio.PDB.Polypeptide import is_aa
@@ -185,6 +186,7 @@ def NewDataFrame(protein = None, pdb_file = None, type = "mol2"):
                 charges_list.append(res_charge)
         return charges_list
     
+    # Hydrophobicity
     def get_hydrophobicity(protein_name, file):
         # Cargar la estructura proteica desde un archivo PDB
         parser = PDBParser()
@@ -211,6 +213,46 @@ def NewDataFrame(protein = None, pdb_file = None, type = "mol2"):
 
         return hydrophobicity_list
 
+    # Entropy
+    def get_entropies(pdb_id, pdb_file):
+        """
+        Calculates the entropy of each residue in a protein.
+
+        Args:
+            pdb_id (str): A string identifier for the protein.
+            pdb_file (str): The path to the PDB file.
+
+        Returns:
+            entropies (list): A list of the entropy values for each residue in the protein.
+        """
+        # Parse the PDB file
+        parser = PDBParser()
+        structure = parser.get_structure(pdb_id, pdb_file)
+
+        # Create an empty list to store the entropies
+        entropies = []
+
+        # Iterate over each residue in the protein
+        for residue in structure.get_residues():
+            if is_aa(residue):
+                # Get the one-letter code for the residue
+                residue_letter = residue.get_resname().upper()
+                # Calculate the probability of the residue occurring in the protein
+                residue_count = 0
+                total_residues = 0
+                for other_residue in structure.get_residues():
+                    if is_aa(other_residue):
+                        total_residues += 1
+                        if other_residue.get_resname().upper() == residue_letter:
+                            residue_count += 1
+                residue_probability = residue_count / total_residues
+                # Calculate the entropy of the residue
+                residue_entropy = -1 * residue_probability * math.log2(residue_probability)
+                entropies.append(residue_entropy)
+
+        return entropies
+
+    # Sequence
     def get_sequence(pdb_file):
         """
         Parses a PDB file and returns a list of the residue letters.
@@ -229,39 +271,37 @@ def NewDataFrame(protein = None, pdb_file = None, type = "mol2"):
         return sequence
 
     # Define the dataframe
+    #if type == "mol2":
+        #new_df = pd.DataFrame(protein.get_proteinCA())
+    site_atoms = protein.get_siteCA().tolist()
+        #protein_atoms = protein.get_proteinCA().tolist()
+    #elif type == "pdb":
+    parser = PDBParser()
+    structure = parser.get_structure("protein", pdb_file)
+
+    # create an empty list to store the alpha carbons
+    alpha_carbons = []
+
+    # iterate over all the atoms in the structure
+    for model in structure:
+        for chain in model:
+            for residue in chain:
+                # check if the residue is an amino acid
+                if residue.get_resname() in ['ALA', 'ARG', 'ASN', 'ASP', 'CYS', 'GLU', 'GLN', 'GLY', 'HIS', 'ILE', 'LEU', 'LYS', 'MET', 'PHE', 'PRO', 'SER', 'THR', 'TRP', 'TYR', 'VAL']:
+                    # get the alpha carbon atom
+                    alpha_carbon = residue['CA']
+            
+                    # add the alpha carbon atom to the list
+                    alpha_carbons.append(alpha_carbon)
+
+    # create a DataFrame with the coordinates of all the alpha carbons
+    new_df = pd.DataFrame([list(atom.get_coord()) for atom in alpha_carbons], columns=['X_COORD', 'Y_COORD', 'Z_COORD'])
+    alpha_carbons = [list(atom.get_coord()) for atom in alpha_carbons]
+
     if type == "mol2":
-        new_df = pd.DataFrame(protein.get_proteinCA())
-        site_atoms = protein.get_siteCA().tolist()
-        protein_atoms = protein.get_proteinCA().tolist()
-    elif type == "pdb":
-        parser = PDBParser()
-        structure = parser.get_structure("protein", pdb_file)
-
-        # create an empty list to store the alpha carbons
-        alpha_carbons = []
-
-        # iterate over all the atoms in the structure
-        for model in structure:
-            for chain in model:
-                for residue in chain:
-                    # check if the residue is an amino acid
-                    if residue.get_resname() in ['ALA', 'ARG', 'ASN', 'ASP', 'CYS', 'GLU', 'GLN', 'GLY', 'HIS', 'ILE', 'LEU', 'LYS', 'MET', 'PHE', 'PRO', 'SER', 'THR', 'TRP', 'TYR', 'VAL']:
-                        # get the alpha carbon atom
-                        alpha_carbon = residue['CA']
-                
-                        # add the alpha carbon atom to the list
-                        alpha_carbons.append(alpha_carbon)
-
-        # create a DataFrame with the coordinates of all the alpha carbons
-        new_df = pd.DataFrame([list(atom.get_coord()) for atom in alpha_carbons], columns=['X_COORD', 'Y_COORD', 'Z_COORD'])
-        alpha_carbons = [list(atom.get_coord()) for atom in alpha_carbons]
-
-    else: 
-        raise("Please introduce a valid data type. Options are 'pdb' or 'mol2'.")
-    if type == "mol2":
-        proteinCA_angles_PHI, proteinCA_angles_PSI = get_angles(protein.get_proteinCA())
+        proteinCA_angles_PHI, proteinCA_angles_PSI = get_angles(alpha_carbons)
         binding = []
-        for atom in protein_atoms:
+        for atom in alpha_carbons:
             if atom in site_atoms:
                 binding.append(1)
             else:
@@ -269,37 +309,38 @@ def NewDataFrame(protein = None, pdb_file = None, type = "mol2"):
     elif type == "pdb":
         proteinCA_angles_PHI, proteinCA_angles_PSI = get_angles(alpha_carbons)
     
-    new_df["AA"] = get_sequence(pdb_file)
-
     proteinCA_angles_PHI.append(0)
     proteinCA_angles_PHI.insert(0,0)
     proteinCA_angles_PSI.append(0)
     proteinCA_angles_PSI.insert(0,0)
-    if type == "mol2":
-        protein_distances = get_avg_distance(protein.get_proteinCA())
-        protein_ligand = get_avg_distance2(protein.get_proteinCA(), protein.get_ligand())
-        protein_cavity = get_avg_distance2(protein.get_proteinCA(), protein.get_cavity())
-    elif type == "pdb":
-        protein_distances = get_avg_distance(np.matrix(alpha_carbons))
+    #if type == "mol2":
+        #protein_distances = get_avg_distance(np.matrix(alpha_carbons))
+        #protein_ligand = get_avg_distance2(protein.get_proteinCA(), protein.get_ligand())
+        #protein_cavity = get_avg_distance2(protein.get_proteinCA(), protein.get_cavity())
+    #elif type == "pdb":
+    protein_distances = get_avg_distance(np.matrix(alpha_carbons))
     # Add the values to the dataframe.
-    if type == "mol2":
-        new_df.columns = ["X_COORD", "Y_COORD", "Z_COORD"]
+    #if type == "mol2":
+        #new_df.columns = ["X_COORD", "Y_COORD", "Z_COORD"]
     new_df["PROTEIN_AVG_LENGTH"] = protein_distances
     if type == "mol2":
-        new_df["PROTEIN_LIGAND_LENGTH"] = protein_ligand
-        new_df["PROTEIN_CAVITY_LENGTH"] = protein_cavity
+        #new_df["PROTEIN_LIGAND_LENGTH"] = protein_ligand
+        #new_df["PROTEIN_CAVITY_LENGTH"] = protein_cavity
         new_df["BINDING_ATOM"] = binding 
-    elif type == "pdb":
-        new_df["PROTEIN_LIGAND_LENGTH"] = [12] * len(protein_distances)
-        new_df["PROTEIN_CAVITY_LENGTH"] = [12] * len(protein_distances)
+    #elif type == "pdb":
+        #new_df["PROTEIN_LIGAND_LENGTH"] = [12] * len(protein_distances)
+        #new_df["PROTEIN_CAVITY_LENGTH"] = [12] * len(protein_distances)
     new_df["PROTEIN_PSI"] = proteinCA_angles_PSI
     new_df["PROTEIN_PHI"] = proteinCA_angles_PHI
+    new_df["AA"] = get_sequence(pdb_file)
     new_df["CHARGES"] = get_residue_charges("protein", pdb_file)
-    if type == "mol2":
-        new_df["SASA"] = getSASA(protein.get_proteinCA())
-    if type == "pdb": 
-        new_df["SASA"] = getSASA(alpha_carbons)
+    #if type == "mol2":
+    #    new_df["SASA"] = getSASA(alpha_carbons)
+    #if type == "pdb": 
+    new_df["SASA"] = getSASA(alpha_carbons)
     new_df["SECONDARY_STRUCTURE"] = calculate_secondary_structure("protein", pdb_file)
     new_df["B-FACTOR"] = b_fact_calculator("protein", pdb_file)
     new_df["HIDROPHOBICITY"] = get_hydrophobicity("protein", pdb_file)
+    new_df["ENTROPY"] = get_entropies("protein", pdb_file)
+
     return new_df

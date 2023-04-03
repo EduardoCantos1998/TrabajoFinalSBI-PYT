@@ -4,9 +4,11 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 
+print("Loading data.")
 with open("dictionary.pckl", "rb") as file:
     df_dict = pickle.load(file)
 
+print("Defining Model.")
 # Split the data into training, validation and test sets
 model = RandomForestClassifier(max_depth=2,random_state=0)
 
