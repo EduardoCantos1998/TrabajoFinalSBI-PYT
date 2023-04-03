@@ -16,7 +16,11 @@ print("Spliting the keys in train/test/validation sets.")
 train_keys, test_keys = train_test_split(list(df_dict.keys()), test_size=0.2, random_state=0)
 train_keys, val_keys = train_test_split(train_keys, test_size=0.2, random_state=0)
 
-amino_keys = {'LEU': 0, 'ISO': 1, 'PRO': 2, 'LYS': 3, 'TYR': 4, 'GLY': 5}
+amino_keys = {
+    'ALA': 0, 'ARG': 1, 'ASN': 2, 'ASP': 3, 'CYS': 4, 'GLN': 5, 'GLU': 6, 'GLY': 7, 
+    'HIS': 8, 'ILE': 9, 'LEU': 10, 'LYS': 11, 'MET': 12, 'PHE': 13, 'PRO': 14, 
+    'SER': 15, 'THR': 16, 'TRP': 17, 'TYR': 18, 'VAL': 19
+}
 
 # Fit the model on the training data and evaluate on the validation set
 best_accuracy = 0
