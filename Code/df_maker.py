@@ -295,7 +295,10 @@ def NewDataFrame(protein = None, pdb_file = None, type = "mol2"):
     new_df["PROTEIN_PSI"] = proteinCA_angles_PSI
     new_df["PROTEIN_PHI"] = proteinCA_angles_PHI
     new_df["CHARGES"] = get_residue_charges("protein", pdb_file)
-    new_df["SASA"] = getSASA(alpha_carbons)
+    if type == "mol2":
+        new_df["SASA"] = getSASA(protein.get_proteinCA())
+    if type == "pdb": 
+        new_df["SASA"] = getSASA(alpha_carbons)
     new_df["SECONDARY_STRUCTURE"] = calculate_secondary_structure("protein", pdb_file)
     new_df["B-FACTOR"] = b_fact_calculator("protein", pdb_file)
     new_df["HIDROPHOBICITY"] = get_hydrophobicity("protein", pdb_file)
