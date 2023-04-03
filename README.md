@@ -43,24 +43,21 @@ pip install -r requirements.txt
 ```
 
 ```bash
-cd Code ### INCOMPLETE
+cd Code
 ```
 ## Usage 
 This is the workflow for the general use of the tool:
 
 ```mermaid
 graph  TD
-flowchart  TD
-#D(((input))) --> A
-A(mol2.py) -.-> B(df_maker.py)
-A -.-> C(dictionary_pickler.py)
-B -.-> C
-B --> D(pdb_testing.py)
-F --> E(testing.py)
-C --> F(model.py)
-G(prueba.py)
+A[mol2.py] -.> B((model.py))
+B --> C[prot_model.py]
+B --> D[prot_dict.py]
+B --> E[dataframe_generator.py]
 
-D-->H(((outcome)))
+C --> L[pdb_testing.py]
+D --> L
+E --> L
 ```
 It takes as an input a PDB file which is evaluated using... then; the output will be a list of the aminoacids and sites belonging to a binding site. 
 
