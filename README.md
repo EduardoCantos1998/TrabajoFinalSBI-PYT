@@ -50,14 +50,11 @@ This is the workflow for the general use of the tool:
 
 ```mermaid
 graph  TD
-A[mol2.py] -.-> B((model.py))
-B --> C[prot_model.py]
-B --> D[prot_dict.py]
-B --> E[dataframe_generator.py]
-
-C --> L[pdb_testing.py]
-D --> L
-E --> L
+A(((input.pdb))) --> B[[model.py]]
+C[[mol2.py]] -.-o B
+D[[df_maker.py]] -.-o B
+E[[dictionary_pickler.py]] -.-o B
+B--> Z(((output)))
 ```
 It takes as an input a PDB file which is evaluated using... then; the output will be a list of the aminoacids and sites belonging to a binding site. 
 
