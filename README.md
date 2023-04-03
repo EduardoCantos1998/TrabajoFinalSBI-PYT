@@ -50,7 +50,7 @@ This is the workflow for the general use of the tool:
 
 ```mermaid
 graph  TD
-A[mol2.py] -.> B((model.py))
+A[mol2.py] -.-> B((model.py))
 B --> C[prot_model.py]
 B --> D[prot_dict.py]
 B --> E[dataframe_generator.py]
