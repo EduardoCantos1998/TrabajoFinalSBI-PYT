@@ -1,4 +1,5 @@
 import mol2
+import freesasa
 import pandas as pd
 import numpy as np
 from Bio.PDB.PDBParser import PDBParser
@@ -7,7 +8,11 @@ from Bio.PDB.Polypeptide import is_aa
 from Bio.SeqUtils.ProtParam import ProteinAnalysis
 from Bio.PDB.SASA import *
 from Bio.PDB import *
+import Bio.PDB
+from Bio.PDB import PDBParser, Selection
 from Bio.PDB.DSSP import DSSP
+import tempfile
+import os
 
 def NewDataFrame(protein = None, pdb_file = None, type = "mol2"):
     """
@@ -96,57 +101,62 @@ def NewDataFrame(protein = None, pdb_file = None, type = "mol2"):
                         #print(f"{residue.get_full_id()[3][1]} {residue.get_resname()} {b_factor_avg}")
         return b_fact
     
-    ## Define SASA
-    #def get_SASA(protein_name, file):
-    #    # Cargar la estructura proteica desde un archivo PDB
-    #    parser = PDBParser()
-    #    structure = parser.get_structure(protein_name, file)
-#
-    #    # Crear un objeto PPBuilder para obtener la secuencia de aminoácidos
-    #    ppb = PPBuilder()
-    #    seq = ppb.build_peptides(structure)[0].get_sequence()
-#
-    #    # Crear un objeto NeighborSearch para buscar residuos cercanos
-    #    ns = NeighborSearch(list(structure.get_atoms()))
-#
-    #    sasa_list = []
-    #    for residue in structure.get_residues():
-    #        if is_aa(residue):
-    #            if 'CA' not in residue:
-    #                sasa_list.append(0.0)
-    #            else:
-    #                center = residue['CA'].get_coord()
-    #                neighbors = ns.search(center, 1.4)
-    #                if len(neighbors) < 3:
-    #                    sasa_list.append(0.0)
-    #                else:
-    #                    A = neighbors[0]['CA'].get_coord() - center
-    #                    B = neighbors[1]['CA'].get_coord() - center
-    #                    C = neighbors[2]['CA'].get_coord() - center
-    #                    area = 0.5 * np.linalg.norm(np.cross(B - A, C - A))
-    #                    sasa_list.append(area)
-    #    return sasa_list
+    # Define SASA
+    def getSASA(alpha_carbons):
+        """
+        Calculates the SASA of each amino acid based on the coordinates of its alpha carbon.
 
-    #def calculate_secondary_structure(pdb_file):
-    #            # Load the PDB file
-    #    parser = PDBParser()
-    #    structure = parser.get_structure("protein", pdb_file)
+        Args:
+        alpha_carbons (list): A list of the coordinates of the alpha carbons.
 
-    #    # Extract the secondary structure information
-    #    ss_list = []
-    #    for model in structure:
-    #        for chain in model:
-    #            for residue in chain:
-    #                #res_id = residue.get_id()[1]
-    #                #res_name = residue.get_resname()
-    #                if "CA" not in residue:
-    #                    continue
-    #                sec_struc = residue.get_full_id()[3][0]
-    #                ss_list.append(sec_struc)
-    #    return ss_list
+        Returns:
+        sasa_values (list): A list of the SASA values for each amino acid.
+        """
 
-    #ss = calculate_secondary_structure(pdb_file)
+        # Convert the alpha_carbons list to a numpy array
+        alpha_carbons = np.array(alpha_carbons)
 
+        # Define the radius of a carbon atom (in Angstroms)
+        carbon_radius = 1.7
+
+        # Calculate the pairwise distance matrix between all alpha carbons
+        pairwise_distances = np.linalg.norm(alpha_carbons[:, np.newaxis, :] - alpha_carbons, axis=-1)
+
+        # Calculate the SASA for each amino acid
+        sasa_values = []
+        for i, d_i in enumerate(pairwise_distances):
+            # Calculate the surface area of a sphere with radius equal to the distance
+            # between the alpha carbon of the current amino acid and all other alpha carbons
+            surface_area = 4 * np.pi * np.power(d_i, 2)
+
+            # Subtract the surface area of the spheres corresponding to neighboring amino acids
+            neighboring_surface_area = 0
+            for j, d_j in enumerate(pairwise_distances[i+1:], i+1):
+                if np.less(d_j, (d_i + carbon_radius)).any():
+                    neighboring_surface_area += 4 * np.pi * np.power(d_j, 2)
+
+            sasa = surface_area - neighboring_surface_area
+            sasa_values.append(sasa)
+
+        return sasa_values
+
+    def calculate_secondary_structure(name, pdb_file):
+        # Parse the PDB file
+        parser = PDBParser()
+        structure = parser.get_structure(name, pdb_file)
+
+        ss_list = []
+        # Create a DSSP object
+        for i in structure:
+            model = i
+            dssp = DSSP(model, pdb_file)
+            # Iterate over each residue and print its secondary structure
+            for residue in dssp:
+                res_id = residue[0]
+                ss = residue[2]
+                ss_list.append(ss)
+        return ss_list
+        
     # Charges
     def get_residue_charges(protein_name, file):
         # Cargar la estructura proteica desde un archivo PDB
@@ -175,7 +185,6 @@ def NewDataFrame(protein = None, pdb_file = None, type = "mol2"):
                 charges_list.append(res_charge)
         return charges_list
     
-
     def get_hydrophobicity(protein_name, file):
         # Cargar la estructura proteica desde un archivo PDB
         parser = PDBParser()
@@ -201,6 +210,23 @@ def NewDataFrame(protein = None, pdb_file = None, type = "mol2"):
                 hydrophobicity_list.append(hydrophobicity)
 
         return hydrophobicity_list
+
+    def get_sequence(pdb_file):
+        """
+        Parses a PDB file and returns a list of the residue letters.
+
+        Args:
+        pdb_file (str): The path to the PDB file.
+
+        Returns:
+        sequence (list): A list of the one-letter codes for each residue in the protein.
+        """
+        structure = Bio.PDB.PDBParser().get_structure('pdb', pdb_file)
+        ppb = Bio.PDB.PPBuilder()
+        sequence = []
+        for pp in ppb.build_peptides(structure):
+            sequence += [residue.resname for residue in pp]
+        return sequence
 
     # Define the dataframe
     if type == "mol2":
@@ -242,6 +268,8 @@ def NewDataFrame(protein = None, pdb_file = None, type = "mol2"):
                 binding.append(0)
     elif type == "pdb":
         proteinCA_angles_PHI, proteinCA_angles_PSI = get_angles(alpha_carbons)
+    
+    new_df["AA"] = get_sequence(pdb_file)
 
     proteinCA_angles_PHI.append(0)
     proteinCA_angles_PHI.insert(0,0)
@@ -267,8 +295,8 @@ def NewDataFrame(protein = None, pdb_file = None, type = "mol2"):
     new_df["PROTEIN_PSI"] = proteinCA_angles_PSI
     new_df["PROTEIN_PHI"] = proteinCA_angles_PHI
     new_df["CHARGES"] = get_residue_charges("protein", pdb_file)
-    #new_df["SASA"] = get_SASA(protein.name, pdb_file)
-    #new_df["SECONDARY_STRUCTURE"] = ss
+    new_df["SASA"] = getSASA(alpha_carbons)
+    new_df["SECONDARY_STRUCTURE"] = calculate_secondary_structure("protein", pdb_file)
     new_df["B-FACTOR"] = b_fact_calculator("protein", pdb_file)
     new_df["HIDROPHOBICITY"] = get_hydrophobicity("protein", pdb_file)
     return new_df
