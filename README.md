@@ -32,12 +32,17 @@ This is an Python script that particularly uses the following dependencies to ta
 git clone https://github.com/EduardoCantos1998/TrabajoFinalSBI-PYT
 cd TrabajoFinalSBI-PYT
 ```
-and 
+
+and proceed to create a python env to run the scripts.
+
 ```bash
 # Create a virtual environment:
 python -m venv venv # Or name it as desired 
 source venv/bin/activate
 pip install -r requirements.txt
+```
+
+```bash
 cd Code
 ```
 ## Usage 
@@ -107,6 +112,16 @@ Now, the problem with regression tree is that they can be inaccurate, that's why
 
 ## Quality results
 Regarding the efficiency of our tool we 
+
+One way to do this is by calculating the Root Mean Square Deviation (RMSD) between the predicted site and the actual site.
+
+RMSD is a measure of the difference between two sets of coordinates. In this case, you can calculate the RMSD between the predicted site and the actual site using a software tool such as PyMOL or VMD.
+
+To do this, you would first need to align the predicted site with the actual site using a structural superposition algorithm. Then, you would calculate the RMSD between the aligned sets of coordinates.
+
+If the RMSD value is low (typically less than 2 Å), this indicates a good prediction. If the RMSD value is high, this indicates a poor prediction.
+
+In addition to RMSD, other metrics can also be used to evaluate ligand site predictions, such as the enrichment factor or the area under the receiver operating characteristic curve (AUC-ROC).
 
 ## [License](LICENSE)
 
