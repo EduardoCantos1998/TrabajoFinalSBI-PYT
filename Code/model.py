@@ -16,12 +16,15 @@ print("Spliting the keys in train/test/validation sets.")
 train_keys, test_keys = train_test_split(list(df_dict.keys()), test_size=0.2, random_state=0)
 train_keys, val_keys = train_test_split(train_keys, test_size=0.2, random_state=0)
 
+amino_keys = {'LEU': 0, 'ISO': 1, 'PRO': 2, 'LYS': 3, 'TYR': 4, 'GLY': 5}
+
 # Fit the model on the training data and evaluate on the validation set
 best_accuracy = 0
 print("Starting the training.")
 for key in train_keys:
     print(f"Current protein: {key}")
     matrix = df_dict[key]
+    matrix["AA"] = matrix["AA"].map(amino_keys)
     X_train = matrix.drop("BINDING_ATOM", axis=1)
     y_train = matrix.BINDING_ATOM
 
