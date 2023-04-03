@@ -3,6 +3,9 @@ import os
 import df_maker
 from random import sample
 import pickle
+import warnings
+
+warnings.filterwarnings("ignore")
 
 # Generate the files
 files = "../Data/final_data/"
@@ -12,13 +15,13 @@ for i in os.listdir(files):
     structures[i] = ['cavityALL.mol2', 'protein.mol2', 'site.mol2', 'ligand.mol2']
 
 # Generate the random files sample.
-random_files = sample(list(structures.keys()), 5020)
+random_files = sample(list(structures.keys()), 200)
 
 print("Generating DataFrame dictionary.")
 df_dict = {}
-time = 0
+time = 1
 for i in random_files:
-    print(f"#################### {time}/{len(random_files)}")
+    print(f"Protein {i}:{time:>4}/{len(random_files)}")
     time += 1
     try:
         path = f"../Data/final_data/{i}/"
