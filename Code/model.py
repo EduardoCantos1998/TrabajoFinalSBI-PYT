@@ -19,9 +19,10 @@ train_keys, val_keys = train_test_split(train_keys, test_size=0.2, random_state=
 # Fit the model on the training data and evaluate on the validation set
 best_accuracy = 0
 cur_prot = 1
-print("Starting the training.")
+print("Starting the hyperparameter tuning.")
 for key in train_keys:
     print(f"Current protein: {key} ### Current protein {cur_prot:>3}/{len(df_dict.keys())}")
+    cur_prot += 1
     matrix = df_dict[key]
     X_train = matrix.drop("BINDING_ATOM", axis=1)
     y_train = matrix.BINDING_ATOM
@@ -42,7 +43,7 @@ for key in train_keys:
 
         # Keep track of the best hyperparameters
         if val_accuracy > best_accuracy:
-            print("Saving accuracy.")
+            print("Saving best parameters.")
             best_accuracy = val_accuracy
             best_params = model.get_params()
 
