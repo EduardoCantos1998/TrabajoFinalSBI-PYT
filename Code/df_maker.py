@@ -271,10 +271,10 @@ def NewDataFrame(protein = None, pdb_file = None, type = "mol2"):
         return sequence
 
     # Define the dataframe
-    #if type == "mol2":
+    if type == "mol2":
         #new_df = pd.DataFrame(protein.get_proteinCA())
-    print("Finding Site Atoms")
-    site_atoms = protein.get_siteCA().tolist()
+        print("Finding Site Atoms")
+        site_atoms = protein.get_siteCA().tolist()
         #protein_atoms = protein.get_proteinCA().tolist()
     #elif type == "pdb":
     parser = PDBParser()
@@ -348,8 +348,11 @@ def NewDataFrame(protein = None, pdb_file = None, type = "mol2"):
     SASA = getSASA(alpha_carbons)
     mean_SASA = []
     print("Calculating average SASA.")
+    mean_SASA = []
+
     for i in SASA:
-        mean_SASA.append(sum(i)/len(i))
+        mean_i = sum(i) / len(i)
+        mean_SASA.append(mean_i)
     new_df["SASA"] = mean_SASA
     new_df["SECONDARY_STRUCTURE"] = calculate_secondary_structure("protein", pdb_file)
     new_df["B-FACTOR"] = b_fact_calculator("protein", pdb_file)
@@ -361,7 +364,7 @@ def NewDataFrame(protein = None, pdb_file = None, type = "mol2"):
     'HIS': 8, 'ILE': 9, 'LEU': 10, 'LYS': 11, 'MET': 12, 'PHE': 13, 'PRO': 14, 
     'SER': 15, 'THR': 16, 'TRP': 17, 'TYR': 18, 'VAL': 19
     }
-    SS_dict = {'-': 0, 'B': 1, 'T': 2, 'S': 3, 'G': 4, 'E': 5, 'H': 6, 'I': 7}
+    SS_dict = {'-': 0, 'B': 1, 'T': 2, 'S': 3, 'G': 4, 'E': 5, 'H': 6, 'P': 7, 'I': 8}
 
     new_df.AA = new_df.AA.map(amino_keys)
     new_df.SECONDARY_STRUCTURE = new_df.SECONDARY_STRUCTURE.map(SS_dict)

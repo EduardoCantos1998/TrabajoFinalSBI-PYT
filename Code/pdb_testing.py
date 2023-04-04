@@ -33,9 +33,6 @@ SS_keys = {
     0: '-', 1: 'B', 2: 'T', 3: 'S', 4: 'G', 5: 'E', 6: 'H', 7: 'I'
 }
 
-pdb_df['AA'].map(amino_keys, in_place = True)
-pdb_df['SECONDARY_STRUCTURE'].map(SS_keys, in_place = True)
-
 parser = PDBParser()
 structure = parser.get_structure("protein", protein)
 
