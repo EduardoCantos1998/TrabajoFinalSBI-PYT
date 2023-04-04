@@ -296,12 +296,15 @@ def NewDataFrame(protein = None, pdb_file = None, type = "mol2"):
                     # add the alpha carbon atom to the list
                     alpha_carbons.append(alpha_carbon)
 
+    print("Create Dataframe")
     # create a DataFrame with the coordinates of all the alpha carbons
     new_df = pd.DataFrame([list(atom.get_coord()) for atom in alpha_carbons], columns=['X_COORD', 'Y_COORD', 'Z_COORD'])
     alpha_carbons = [list(atom.get_coord()) for atom in alpha_carbons]
 
     if type == "mol2":
+        print("Calculating angles.")
         proteinCA_angles_PHI, proteinCA_angles_PSI = get_angles(alpha_carbons)
+        print("Saving binding site.")
         binding = []
         for atom in protein.get_proteinCA().tolist():
             if atom in site_atoms:
@@ -309,6 +312,7 @@ def NewDataFrame(protein = None, pdb_file = None, type = "mol2"):
             else:
                 binding.append(0)
     elif type == "pdb":
+        print("Calculating angles.")
         proteinCA_angles_PHI, proteinCA_angles_PSI = get_angles(alpha_carbons)
     
     proteinCA_angles_PHI.append(0)
@@ -320,10 +324,12 @@ def NewDataFrame(protein = None, pdb_file = None, type = "mol2"):
         #protein_ligand = get_avg_distance2(protein.get_proteinCA(), protein.get_ligand())
         #protein_cavity = get_avg_distance2(protein.get_proteinCA(), protein.get_cavity())
     #elif type == "pdb":
+    print("Finding protein's inner distance.")
     protein_distances = get_avg_distance(np.matrix(alpha_carbons))
     # Add the values to the dataframe.
     #if type == "mol2":
         #new_df.columns = ["X_COORD", "Y_COORD", "Z_COORD"]
+    print("Saving features in variables.")
     new_df["PROTEIN_AVG_LENGTH"] = protein_distances
     if type == "mol2":
         #new_df["PROTEIN_LIGAND_LENGTH"] = protein_ligand
@@ -341,6 +347,7 @@ def NewDataFrame(protein = None, pdb_file = None, type = "mol2"):
     #if type == "pdb": 
     SASA = getSASA(alpha_carbons)
     mean_SASA = []
+    print("Calculating average SASA.")
     for i in SASA:
         mean_SASA.append(sum(i)/len(i))
     new_df["SASA"] = mean_SASA
@@ -357,6 +364,6 @@ def NewDataFrame(protein = None, pdb_file = None, type = "mol2"):
     SS_dict = {'-': 0, 'B': 1, 'T': 2, 'S': 3, 'G': 4, 'E': 5, 'H': 6}
 
     new_df.AA = new_df.AA.map(amino_keys)
-    new_df.SECONDARY_STRUCTURE = new_df.AA.map(SS_dict)
-
+    new_df.SECONDARY_STRUCTURE = new_df.SECONDARY_STRUCTURE.map(SS_dict)
+    print("Finished generating DataFrame.")
     return new_df

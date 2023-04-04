@@ -15,7 +15,7 @@ for i in os.listdir(files):
     structures[i] = ['cavityALL.mol2', 'protein.mol2', 'site.mol2', 'ligand.mol2']
 
 # Generate the random files sample.
-random_files = sample(list(structures.keys()), 1000)
+random_files = sample(list(structures.keys()), 2000)
 
 print("Generating DataFrame dictionary.")
 df_dict = {}
@@ -39,6 +39,9 @@ for i in random_files:
         errors += 1
     except KeyError:
         print("CA not found.")
+        errors += 1
+    except Exception:
+        print("DSSP failed")
         errors += 1
 
 print("##########################################")
