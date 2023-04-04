@@ -63,9 +63,9 @@ subgraph OPTIONALLY: creating your own pickle fa:fa-jar with your own data;
 end
 G(((custom data))) --> B;
 invoked -.-o B
-  A(((input.pdb))) -- model.pckl --> F;
+  A(((input.pdb))) --> F;
 subgraph testing pdb with our data;
-  B -.-o F[pdb_testing.py];
+  B -- model.pckl -.-o F[pdb_testing.py];
 end;
 F ==> Z(((output.pdb)))
 ```
