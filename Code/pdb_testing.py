@@ -20,8 +20,21 @@ with open("model.pckl", "rb") as file:
 print("Creating dataframe.")
 pdb_df = df_maker.NewDataFrame(pdb_file = protein, type="pdb")
 
-print(pdb_df.AA)
 print("Extracting sequnce.")
+
+amino_keys = {
+    0: 'ALA', 1: 'ARG', 2: 'ASN', 3: 'ASP', 4: 'CYS', 5: 'GLN', 
+    6: 'GLU', 7: 'GLY', 8: 'HIS', 9: 'ILE', 10: 'LEU', 11: 'LYS', 
+    12: 'MET', 13: 'PHE', 14: 'PRO', 15: 'SER', 16: 'THR', 
+    17: 'TRP', 18: 'TYR', 19: 'VAL'
+}
+
+SS_keys = {
+    0: '-', 1: 'B', 2: 'T', 3: 'S', 4: 'G', 5: 'E', 6: 'H', 7: 'I'
+}
+
+pdb_df['AA'].map(amino_keys, in_place = True)
+pdb_df['SECONDARY_STRUCTURE'].map(SS_keys, in_place = True)
 
 parser = PDBParser()
 structure = parser.get_structure("protein", protein)
