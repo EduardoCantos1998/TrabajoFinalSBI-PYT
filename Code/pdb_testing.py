@@ -21,13 +21,20 @@ print("Creating dataframe.")
 pdb_df = df_maker.NewDataFrame(pdb_file = protein, type="pdb")
 
 print("Extracting sequnce.")
+
 amino_keys = {
-    'ALA': 0, 'ARG': 1, 'ASN': 2, 'ASP': 3, 'CYS': 4, 'GLN': 5, 'GLU': 6, 'GLY': 7, 
-    'HIS': 8, 'ILE': 9, 'LEU': 10, 'LYS': 11, 'MET': 12, 'PHE': 13, 'PRO': 14, 
-    'SER': 15, 'THR': 16, 'TRP': 17, 'TYR': 18, 'VAL': 19
+    0: 'ALA', 1: 'ARG', 2: 'ASN', 3: 'ASP', 4: 'CYS', 5: 'GLN', 
+    6: 'GLU', 7: 'GLY', 8: 'HIS', 9: 'ILE', 10: 'LEU', 11: 'LYS', 
+    12: 'MET', 13: 'PHE', 14: 'PRO', 15: 'SER', 16: 'THR', 
+    17: 'TRP', 18: 'TYR', 19: 'VAL'
 }
 
-pdb_df['AA'] = pdb_df['AA'].map(amino_keys)
+SS_keys = {
+    0: '-', 1: 'B', 2: 'T', 3: 'S', 4: 'G', 5: 'E', 6: 'H', 7: 'I'
+}
+
+pdb_df['AA'].map(amino_keys, in_place = True)
+pdb_df['SECONDARY_STRUCTURE'].map(SS_keys, in_place = True)
 
 parser = PDBParser()
 structure = parser.get_structure("protein", protein)

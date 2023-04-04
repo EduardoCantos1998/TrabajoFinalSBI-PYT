@@ -329,7 +329,7 @@ def NewDataFrame(protein = None, pdb_file = None, type = "mol2"):
     # Add the values to the dataframe.
     #if type == "mol2":
         #new_df.columns = ["X_COORD", "Y_COORD", "Z_COORD"]
-    print("Saving features in variables.")
+    print("Saving features in DataFrame.")
     new_df["PROTEIN_AVG_LENGTH"] = protein_distances
     if type == "mol2":
         #new_df["PROTEIN_LIGAND_LENGTH"] = protein_ligand
@@ -361,7 +361,7 @@ def NewDataFrame(protein = None, pdb_file = None, type = "mol2"):
     'HIS': 8, 'ILE': 9, 'LEU': 10, 'LYS': 11, 'MET': 12, 'PHE': 13, 'PRO': 14, 
     'SER': 15, 'THR': 16, 'TRP': 17, 'TYR': 18, 'VAL': 19
     }
-    SS_dict = {'-': 0, 'B': 1, 'T': 2, 'S': 3, 'G': 4, 'E': 5, 'H': 6}
+    SS_dict = {'-': 0, 'B': 1, 'T': 2, 'S': 3, 'G': 4, 'E': 5, 'H': 6, 'I': 7}
 
     new_df.AA = new_df.AA.map(amino_keys)
     new_df.SECONDARY_STRUCTURE = new_df.SECONDARY_STRUCTURE.map(SS_dict)
