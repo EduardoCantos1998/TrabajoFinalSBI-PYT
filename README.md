@@ -55,18 +55,19 @@ graph  LR
 subgraph OPTIONALLY: creating your own pickle fa:fa-jar with your own data;
   subgraph invoked;
     direction LR;
-    C[mol2.py];
-    D[df_maker.py];
-    E[dictionary_pickler.py];
+    B[model.py]; 
+    C[mol2.py]-.-o B;
+    D[df_maker.py]-.-o B;
+    E[dictionary_pickler.py]-.-o B;
   end
 end
-invoked -.-o B[model.py]
+G(((custom data))) --> B;
+invoked -.-o B
+  A(((input.pdb))) -- model.pckl --> F;
 subgraph testing pdb with our data;
-  A(((input.pdb))) -- model.pckl --> B;
-  B --> F[pdb_testing.py];
+  B -.-o F[pdb_testing.py];
 end;
-
-B ==> Z(((output.pdb)))
+F ==> Z(((output.pdb)))
 ```
 It takes as an input a PDB file which is evaluated using... then; the output will be a list of the aminoacids and sites belonging to a binding site. 
 
