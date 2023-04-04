@@ -9,11 +9,12 @@ with open("dictionary.pckl", "rb") as file:
     df_dict = pickle.load(file)
 
 print("Defining Model.")
+class_weights = {0: 1, 1: 7}
 # Split the data into training, validation and test sets
-model = RandomForestClassifier(max_depth=2,random_state=0)
+model = RandomForestClassifier(max_depth=2,random_state=0, class_weight=class_weights)
 
 print("Spliting the keys in train/test/validation sets.")
-train_keys, test_keys = train_test_split(list(df_dict.keys()), test_size=0.2, random_state=0)
+train_keys, test_keys = train_test_split(list(df_dict.keys()), test_size=0.3, random_state=0)
 train_keys, val_keys = train_test_split(train_keys, test_size=0.2, random_state=0)
 
 # Fit the model on the training data and evaluate on the validation set

@@ -61,7 +61,7 @@ pdb_df["PREDICTED_ATOM"] = prediction
 try:
     name = sys.argv[2]
 except IndexError:
-    name = protein[-8:-4]
+    name = protein[:-4]
 print("Saving data to new file.")
 with open(f"{name}_prediction.pdb", "w") as file:
     pass
