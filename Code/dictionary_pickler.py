@@ -15,7 +15,7 @@ for i in os.listdir(files):
     structures[i] = ['cavityALL.mol2', 'protein.mol2', 'site.mol2', 'ligand.mol2']
 
 # Generate the random files sample.
-random_files = sample(list(structures.keys()), 200)
+random_files = sample(list(structures.keys()), 2000)
 
 print("Generating DataFrame dictionary.")
 df_dict = {}
@@ -23,6 +23,7 @@ time = 1
 errors = 0
 successes = 0
 for i in random_files:
+    print(f"############################################ Successes = {successes} Errors = {errors}")
     print(f"Protein {i}:{time:>5}/{len(random_files)}")
     time += 1
     try:
@@ -39,10 +40,15 @@ for i in random_files:
     except KeyError:
         print("CA not found.")
         errors += 1
+    except Exception:
+        print("DSSP failed")
+        errors += 1
 
+print("##########################################")
 print(f"Errors: {errors}/{len(random_files)}")
 print(f"Successes: {successes}/{len(random_files)}")
 print(f"Error/Success ratio: {errors/successes:.3f}")
+print("##########################################")
 
 print("Saving dictionary to pickle.")
 with open("dictionary.pckl", "wb") as file:
