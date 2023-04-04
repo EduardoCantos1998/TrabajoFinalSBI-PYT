@@ -13,6 +13,7 @@
   - [Theory](#theory)
     - [Random Forest](#random-forest)
   - [Quality results](#quality-results)
+    - [DSSP](#dssp)
   - [License](#license)
   - [References](#references)
 
@@ -50,17 +51,22 @@ cd Code
 This is the workflow for the general use of the tool:
 
 ```mermaid
-graph  TD
-A(((input.pdb))) ------> B[[model.py]]
-subgraph invoked_scripts
-  direction LR
-  C[[mol2.py]]
-  D[[df_maker.py]]
-  E[[dictionary_pickler.py]]
+graph  LR
+subgraph OPTIONALLY: creating your own pickle fa:fa-jar with your own data;
+  subgraph invoked;
+    direction LR;
+    C[mol2.py];
+    D[df_maker.py];
+    E[dictionary_pickler.py];
+  end
 end
+invoked -.-o B[model.py]
+subgraph testing pdb with our data;
+  A(((input.pdb))) -- model.pckl --> B;
+  B --> F[pdb_testing.py];
+end;
 
-invoked_scripts -.-o B
-B--> Z(((output)))
+B ==> Z(((output.pdb)))
 ```
 It takes as an input a PDB file which is evaluated using... then; the output will be a list of the aminoacids and sites belonging to a binding site. 
 
@@ -109,6 +115,9 @@ Random Forests is an ensemble method that combines several individual classifica
 ## Quality results
 Regarding the efficiency of our tool we tried calculating the Root Mean Square Deviation (RMSD) between the predicted site and the actual site. RMSD is a measure of the difference between two sets of coordinates. In this case, we calculated the RMSD between the predicted site and the actual site using a software tool such as PyMOL or VMD. To do this, we aligned the predicted site with the actual site using a structural superposition algorithm. Then, calculated the RMSD between the aligned sets of coordinates. If the RMSD value was low (typically less than 2 Å), this indicated a good prediction. If the RMSD value was high, this indicated a poor prediction.  
 In addition to RMSD, other metrics can also be used to evaluate ligand site predictions, such as the enrichment factor or the area under the receiver operating characteristic curve (AUC-ROC).
+
+### DSSP
+We used
 
 ## [License](LICENSE)
 
