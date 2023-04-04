@@ -21,6 +21,7 @@ amino_keys = {
     'HIS': 8, 'ILE': 9, 'LEU': 10, 'LYS': 11, 'MET': 12, 'PHE': 13, 'PRO': 14, 
     'SER': 15, 'THR': 16, 'TRP': 17, 'TYR': 18, 'VAL': 19
 }
+SS_dict = {'-': 0, 'B': 1, 'T': 2, 'S': 3, 'G': 4, 'E': 5, 'H': 6}
 
 # Fit the model on the training data and evaluate on the validation set
 best_accuracy = 0
@@ -29,6 +30,8 @@ for key in train_keys:
     print(f"Current protein: {key}")
     matrix = df_dict[key]
     matrix["AA"] = matrix["AA"].map(amino_keys)
+    matrix["SECONDARY_STRUCTURE"] = matrix["SECONDARY_STRUCTURE"].map(SS_dict)
+    matrix["SASA"] = matrix["SASA"]
     X_train = matrix.drop("BINDING_ATOM", axis=1)
     y_train = matrix.BINDING_ATOM
 

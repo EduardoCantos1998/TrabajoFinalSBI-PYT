@@ -273,6 +273,7 @@ def NewDataFrame(protein = None, pdb_file = None, type = "mol2"):
     # Define the dataframe
     #if type == "mol2":
         #new_df = pd.DataFrame(protein.get_proteinCA())
+    print("Finding Site Atoms")
     site_atoms = protein.get_siteCA().tolist()
         #protein_atoms = protein.get_proteinCA().tolist()
     #elif type == "pdb":
@@ -282,6 +283,7 @@ def NewDataFrame(protein = None, pdb_file = None, type = "mol2"):
     # create an empty list to store the alpha carbons
     alpha_carbons = []
 
+    print("Finding AlphaCarbons")
     # iterate over all the atoms in the structure
     for model in structure:
         for chain in model:
@@ -301,7 +303,7 @@ def NewDataFrame(protein = None, pdb_file = None, type = "mol2"):
     if type == "mol2":
         proteinCA_angles_PHI, proteinCA_angles_PSI = get_angles(alpha_carbons)
         binding = []
-        for atom in alpha_carbons:
+        for atom in protein.get_proteinCA().tolist():
             if atom in site_atoms:
                 binding.append(1)
             else:
@@ -337,10 +339,24 @@ def NewDataFrame(protein = None, pdb_file = None, type = "mol2"):
     #if type == "mol2":
     #    new_df["SASA"] = getSASA(alpha_carbons)
     #if type == "pdb": 
-    new_df["SASA"] = getSASA(alpha_carbons)
+    SASA = getSASA(alpha_carbons)
+    mean_SASA = []
+    for i in SASA:
+        mean_SASA.append(sum(i)/len(i))
+    new_df["SASA"] = mean_SASA
     new_df["SECONDARY_STRUCTURE"] = calculate_secondary_structure("protein", pdb_file)
     new_df["B-FACTOR"] = b_fact_calculator("protein", pdb_file)
     new_df["HIDROPHOBICITY"] = get_hydrophobicity("protein", pdb_file)
     new_df["ENTROPY"] = get_entropies("protein", pdb_file)
+
+    amino_keys = {
+    'ALA': 0, 'ARG': 1, 'ASN': 2, 'ASP': 3, 'CYS': 4, 'GLN': 5, 'GLU': 6, 'GLY': 7, 
+    'HIS': 8, 'ILE': 9, 'LEU': 10, 'LYS': 11, 'MET': 12, 'PHE': 13, 'PRO': 14, 
+    'SER': 15, 'THR': 16, 'TRP': 17, 'TYR': 18, 'VAL': 19
+    }
+    SS_dict = {'-': 0, 'B': 1, 'T': 2, 'S': 3, 'G': 4, 'E': 5, 'H': 6}
+
+    new_df.AA = new_df.AA.map(amino_keys)
+    new_df.SECONDARY_STRUCTURE = new_df.AA.map(SS_dict)
 
     return new_df
