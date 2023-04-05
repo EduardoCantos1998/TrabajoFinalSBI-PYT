@@ -9,7 +9,7 @@ with open("dictionary.pckl", "rb") as file:
     df_dict = pickle.load(file)
 
 print("Defining Model.")
-class_weights = {0: 1, 1: 7}
+class_weights = {0: 1, 1: 8}
 # Split the data into training, validation and test sets
 model = RandomForestClassifier(max_depth=2,random_state=0, class_weight=class_weights)
 
@@ -49,6 +49,7 @@ for key in train_keys:
             best_params = model.get_params()
 
 # Train the final model on the combined training and validation sets
+print("Creating ")
 train_val_keys = train_keys + val_keys
 X_train_val = pd.concat([df_dict[key].drop("BINDING_ATOM", axis=1) for key in train_val_keys])
 y_train_val = pd.concat([df_dict[key].BINDING_ATOM for key in train_val_keys])
