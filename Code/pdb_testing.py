@@ -52,18 +52,42 @@ print("Predicting file.")
 prediction = model.predict(pdb_df)
 prediction = list(prediction)
 predicted_sequence = ""
+
 for pred, seq in zip(prediction, sequence):
     if pred == 1:
         predicted_sequence += seq
 
-pdb_df["PREDICTED_ATOM"] = prediction
+#print(prediction)
 
+# Optional argument
 try:
     name = sys.argv[2]
 except IndexError:
     name = protein[:-4]
+
 print("Saving data to new file.")
+atoms = []
+all_atoms = []
+with open(protein, "r") as file:
+    for line in file:
+        if line.startswith("ATOM") and line[13:16].rstrip() == "CA":
+            atoms.append(line)
+        if line.startswith("ATOM"):
+            all_atoms.append(line)
+        
+
 with open(f"{name}_prediction.pdb", "w") as file:
-    pass
+    file.write("")
+
+res_pos_list = []
+for pred, ato in zip(prediction, atoms):
+    if pred == 1:
+        res_pos_list.append((ato[17:21], ato[23:26]))
+
+with open(f"{name}_prediction.pdb", "a") as file:
+    for res, pos in res_pos_list:
+        for ato in all_atoms:
+            if res == ato[17:21] and pos == ato[23:26]:
+                file.writelines(ato)
 
 print(f"Predicted Binding site to '{name}_prediction.pdb'.")

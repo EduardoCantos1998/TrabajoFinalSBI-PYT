@@ -84,17 +84,14 @@ def NewDataFrame(protein = None, pdb_file = None, type = "mol2"):
         return phi, psi
     
     # Define the pdb protein
-    def b_fact_calculator(protein_name, file):
-        # Load the PDB file
-        parser = PDBParser()
-        structure = parser.get_structure(protein_name, file)
+    def b_fact_calculator(structure):
         # Calculate the average B-factor for each residue
         b_fact = []
         for model in structure:
             for chain in model:
                 ppb = PPBuilder()
                 for pp in ppb.build_peptides(chain):
-                    residues = pp.get_sequence()
+                    #residues = pp.get_sequence()
                     for residue in pp:
                         b_factor_sum = sum(atom.bfactor for atom in residue)
                         b_factor_avg = b_factor_sum / len(residue)
@@ -141,57 +138,62 @@ def NewDataFrame(protein = None, pdb_file = None, type = "mol2"):
 
         return sasa_values
 
-    def calculate_secondary_structure(name, pdb_file):
-        # Parse the PDB file
-        parser = PDBParser()
-        structure = parser.get_structure(name, pdb_file)
-
+    def calculate_secondary_structure(structure):
         ss_list = []
+        aa_list = ['G', 'A', 'V', 'L', 'I', 'M', 'P', 'F', 'W', 'N', 'Q', 'S', 'T', 'Y', 'C', 'D', 'E', 'K', 'R', 'H']
         # Create a DSSP object
         for i in structure:
             model = i
             dssp = DSSP(model, pdb_file)
             # Iterate over each residue and print its secondary structure
             for residue in dssp:
-                res_id = residue[0]
-                ss = residue[2]
-                ss_list.append(ss)
+                if residue[1] in aa_list:
+                    #res_id = residue[0]
+                    ss = residue[2]
+                    ss_list.append(ss)
         return ss_list
         
     # Charges
-    def get_residue_charges(protein_name, file):
-        # Cargar la estructura proteica desde un archivo PDB
-        parser = PDBParser()
-        structure = parser.get_structure(protein_name, file)
-
+    def get_residue_pI(amino_list):
         # Crear un objeto PPBuilder para obtener la secuencia de aminoácidos
-        ppb = PPBuilder()
-        seq = ppb.build_peptides(structure)[0].get_sequence()
+        #ppb = PPBuilder()
+        #seq = ppb.build_peptides(structure)[0].get_sequence()
 
         # Crear un diccionario de cargas por aminoácido
-        residue_charges = {
-            'ARG': 1, 'HIS': 0.5, 'LYS': 1, 'ASP': -1, 'GLU': -1, 'SER': 0,
-            'THR': 0, 'ASN': 0, 'GLN': 0, 'CYS': 0, 'SEC': 0, 'GLY': 0,
-            'PRO': 0, 'ALA': 0, 'VAL': 0, 'ILE': 0, 'LEU': 0, 'MET': 0, 
-            'PHE': 0, 'TYR': -0.5, 'TRP': -0.5,
+        residue_pI = {
+            'ARG': 10.76,
+            'HIS': 7.59,
+            'LYS': 9.74,
+            'ASP': 2.77,
+            'GLU': 3.22,
+            'SER': 5.68,
+            'THR': 5.60,
+            'ASN': 5.41,
+            'GLN': 5.65,
+            'CYS': 5.07,
+            'SEC': 5.07,  # assuming selenocysteine has the same pI as cysteine
+            'GLY': 5.97,
+            'PRO': 6.30,
+            'ALA': 6.00,
+            'VAL': 5.96,
+            'ILE': 6.02,
+            'LEU': 5.98,
+            'MET': 5.74,
+            'PHE': 5.48,
+            'TYR': 5.66,
+            'TRP': 5.89,
         }
 
         # Calcular la carga neta de cada residuo
-        charges_list = []
+        pI_list = []
             
-        for residue in structure.get_residues():
-            if is_aa(residue):
-                res_name = residue.get_resname()
-                res_charge = residue_charges.get(res_name, 0)
-                charges_list.append(res_charge)
-        return charges_list
+        for res in amino_list:
+            pI_list.append(residue_pI[res])
+        
+        return pI_list
     
     # Hydrophobicity
-    def get_hydrophobicity(protein_name, file):
-        # Cargar la estructura proteica desde un archivo PDB
-        parser = PDBParser()
-        structure = parser.get_structure(protein_name, file)
-
+    def get_hydrophobicity(structure):
         # Crear un objeto PPBuilder para obtener la secuencia de aminoácidos
         ppb = PPBuilder()
         seq = ppb.build_peptides(structure)
@@ -214,7 +216,7 @@ def NewDataFrame(protein = None, pdb_file = None, type = "mol2"):
         return hydrophobicity_list
 
     # Entropy
-    def get_entropies(pdb_id, pdb_file):
+    def get_entropies(structure):
         """
         Calculates the entropy of each residue in a protein.
 
@@ -225,16 +227,13 @@ def NewDataFrame(protein = None, pdb_file = None, type = "mol2"):
         Returns:
             entropies (list): A list of the entropy values for each residue in the protein.
         """
-        # Parse the PDB file
-        parser = PDBParser()
-        structure = parser.get_structure(pdb_id, pdb_file)
-
         # Create an empty list to store the entropies
         entropies = []
+        aa_list = ['GLY', 'ALA', 'VAL', 'LEU', 'ILE', 'MET', 'PRO', 'PHE', 'TRP', 'ASN', 'GLN', 'SER', 'THR', 'TYR', 'CYS', 'ASP', 'GLU', 'LYS', 'ARG', 'HIS']
 
         # Iterate over each residue in the protein
         for residue in structure.get_residues():
-            if is_aa(residue):
+            if residue.get_resname().upper() in aa_list:
                 # Get the one-letter code for the residue
                 residue_letter = residue.get_resname().upper()
                 # Calculate the probability of the residue occurring in the protein
@@ -311,6 +310,7 @@ def NewDataFrame(protein = None, pdb_file = None, type = "mol2"):
                 binding.append(1)
             else:
                 binding.append(0)
+
     elif type == "pdb":
         print("Calculating angles.")
         proteinCA_angles_PHI, proteinCA_angles_PSI = get_angles(alpha_carbons)
@@ -341,7 +341,7 @@ def NewDataFrame(protein = None, pdb_file = None, type = "mol2"):
     new_df["PROTEIN_PSI"] = proteinCA_angles_PSI
     new_df["PROTEIN_PHI"] = proteinCA_angles_PHI
     new_df["AA"] = get_sequence(pdb_file)
-    new_df["CHARGES"] = get_residue_charges("protein", pdb_file)
+    new_df["pI"] = get_residue_pI(get_sequence(pdb_file))
     #if type == "mol2":
     #    new_df["SASA"] = getSASA(alpha_carbons)
     #if type == "pdb": 
@@ -354,10 +354,10 @@ def NewDataFrame(protein = None, pdb_file = None, type = "mol2"):
         mean_i = sum(i) / len(i)
         mean_SASA.append(mean_i)
     new_df["SASA"] = mean_SASA
-    new_df["SECONDARY_STRUCTURE"] = calculate_secondary_structure("protein", pdb_file)
-    new_df["B-FACTOR"] = b_fact_calculator("protein", pdb_file)
-    new_df["HIDROPHOBICITY"] = get_hydrophobicity("protein", pdb_file)
-    new_df["ENTROPY"] = get_entropies("protein", pdb_file)
+    new_df["SECONDARY_STRUCTURE"] = calculate_secondary_structure(structure)
+    new_df["B-FACTOR"] = b_fact_calculator(structure)
+    new_df["HIDROPHOBICITY"] = get_hydrophobicity(structure)
+    new_df["ENTROPY"] = get_entropies(structure)
 
     amino_keys = {
     'ALA': 0, 'ARG': 1, 'ASN': 2, 'ASP': 3, 'CYS': 4, 'GLN': 5, 'GLU': 6, 'GLY': 7, 
