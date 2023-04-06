@@ -51,6 +51,8 @@ with open(f"{file_path}/model_7.pckl", "rb") as file:
     model_7 = pickle.load(file)
 with open(f"{file_path}/model_8.pckl", "rb") as file:
     model_8 = pickle.load(file)
+with open(f"{file_path}/model_10.pckl", "rb") as file:
+    model_10 = pickle.load(file)
 
 print("Creating dataframe.")
 pdb_df = df_maker.NewDataFrame(pdb_file = protein, type="pdb")
@@ -89,12 +91,15 @@ try:
 except NameError:
     print("Trying with model 6.")
     prediction = model_6.predict(pdb_df)
-    if 1 not in prediction:
+    if 1 not in prediction or len(prediction[prediction == 1]) <= 3:
         print("Trying with model 7.")
         prediction = model_7.predict(pdb_df)
         if 1 not in prediction:
             print("Trying with model 8.")
             prediction = model_8.predict(pdb_df)
+            if 1 not in prediction:
+                print("Trying with model 10.")
+                prediction = model_10.predict(pdb_df)
 
 #predicted_sequence = ""
 #for pred, seq in zip(prediction, sequence):
@@ -159,7 +164,11 @@ for i in range(len(peaks)):
         end = len(prediction)
     site = pdb_df.loc[start:end-1, 'AA'].values
     if any(aa in site for aa in potential_aa):
-        sites.append(site)
+        predicted_values = []
+        for i in site:
+            if i in potential_aa:
+                predicted_values.append(i)
+        sites.append(predicted_values)
 
 sites_sorted = sorted(sites, key=len)
 
