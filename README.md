@@ -1,7 +1,7 @@
-# BCN-binding-site
+# SBIXPYT: RF approach for PPI
 ![Results from 3IMX](3IMX_result.png?raw=true "Results from 3IMX")
 ## Table of Contents
-- [BCN-binding-site](#bcn-binding-site)
+- [SBIXPYT: RF approach for PPI](#sbixpyt-rf-approach-for-ppi)
   - [Table of Contents](#table-of-contents)
   - [Introduction](#introduction)
   - [Training](#training)
