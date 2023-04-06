@@ -8,12 +8,20 @@ import pandas as pd
 import df_maker
 import warnings
 from scipy.signal import find_peaks
+import os
+import urllib.request as url_req
 
 warnings.filterwarnings("ignore")
 
 print("Reading file.")
 try:
-    protein = sys.argv[1]
+    if os.path.isfile(sys.argv[1]):
+        protein = sys.argv[1]
+    else:
+        pdb_url = f"https://files.rcsb.org/download/{sys.argv[1]}.pdb"
+        os.mkdir(f"Prediction_{sys.argv[1]}")
+        url_req.urlretrieve(pdb_url, f"Prediction_{sys.argv[1]}/protein.pdb")
+        protein = f"Prediction_{sys.argv[1]}/protein.pdb"
 except IndexError:
     raise IndexError("Please introduce a PDB file.")
 
