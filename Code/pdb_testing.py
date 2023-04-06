@@ -10,6 +10,7 @@ import warnings
 from scipy.signal import find_peaks
 import os
 import urllib.request as url_req
+import urllib
 
 warnings.filterwarnings("ignore")
 
@@ -32,7 +33,7 @@ except IndexError:
     raise IndexError("Please introduce a PDB file.")
 except urllib.error.HTTPError:
     os.rmdir(f"Prediction_{sys.argv[1]}")
-    raise urllib.error.HTTPError(f"No protein with code {sys.argv[1]} has been found.")
+    raise FileNotFoundError(f"No protein with code {sys.argv[1]} has been found.")
 
 try:
     with open(sys.argv[2], "rb") as file:
