@@ -8,14 +8,28 @@ import pandas as pd
 import df_maker
 import warnings
 from scipy.signal import find_peaks
+import os
+import urllib.request as url_req
 
 warnings.filterwarnings("ignore")
 
 print("Reading file.")
 try:
-    protein = sys.argv[1]
+    if os.path.isfile(sys.argv[1]):
+        protein = sys.argv[1]
+    else:
+        pdb_url = f"https://files.rcsb.org/download/{sys.argv[1]}.pdb"
+        os.mkdir(f"Prediction_{sys.argv[1]}")
+        url_req.urlretrieve(pdb_url, f"Prediction_{sys.argv[1]}/protein.pdb")
+        protein = f"Prediction_{sys.argv[1]}/protein.pdb"
 except IndexError:
-    raise "Please introduce a PDB file."
+    raise IndexError("Please introduce a PDB file.")
+
+try:
+    with open(sys.argv[2], "rb") as file:
+        USER_model = pickle.load(file)
+except IndexError:
+    print("No user model provided.")
 
 print("Loading model.")
 with open("model_6.pckl", "rb") as file:
@@ -56,14 +70,18 @@ amino_keys = {
 #sequence = list(sequence)
 
 print("Predicting file.")
-print("Trying with model 6.")
-prediction = model_6.predict(pdb_df)
-if 1 not in prediction:
-    print("Trying with model 7.")
-    prediction = model_7.predict(pdb_df)
+try:
+    prediction = USER_model.predict(pdb_df)
+    print("Trying with user model.")
+except NameError:
+    print("Trying with model 6.")
+    prediction = model_6.predict(pdb_df)
     if 1 not in prediction:
-        print("Trying with model 8.")
-        prediction = model_8.predict(pdb_df)
+        print("Trying with model 7.")
+        prediction = model_7.predict(pdb_df)
+        if 1 not in prediction:
+            print("Trying with model 8.")
+            prediction = model_8.predict(pdb_df)
 
 #predicted_sequence = ""
 #for pred, seq in zip(prediction, sequence):
@@ -72,11 +90,7 @@ if 1 not in prediction:
 
 #print(prediction)
 
-# Optional argument
-try:
-    name = sys.argv[2]
-except IndexError:
-    name = protein[:-4]
+name = protein[:-4]
 
 print("")
 atoms = []

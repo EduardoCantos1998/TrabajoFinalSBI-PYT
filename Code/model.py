@@ -1,15 +1,39 @@
 import pickle
 import pandas as pd
+import sys 
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
+
+"""
+This script generates a model using the dictionary.pckl we generated with
+dictionary_pickler.py. This process tends to take around 30 minutes, so do only
+when the current models don't suffice. It accepts two arguments:
+
+INPUT:
+    - Weight of the value of positive cases: this affects how likely the model
+      is to assign a 1 to the atom.
+    - Name [OPTIONAL]: it is the name of the model pickle to be generated. 
+
+OUTPUT:
+    - Pickle of the model. It can be generated using your name as defined above.
+      If left undefined, it will name it 'model_WEIGHT.pckl'.
+"""
 
 print("Loading data.")
 with open("dictionary.pckl", "rb") as file:
     df_dict = pickle.load(file)
 
+try:
+    if sys.argv[1].isnumeric():
+        pass
+    else:
+        raise ValueError("Please introduce a weight in numerical form.")
+except IndexError:
+    raise IndexError("Please introduce a weight in numerical form.")
+
 print("Defining Model.")
-class_weights = {0: 1, 1: 8}
+class_weights = {0: 1, 1: sys.argv[1]}
 # Split the data into training, validation and test sets
 model = RandomForestClassifier(max_depth=2,random_state=0, class_weight=class_weights)
 
@@ -71,7 +95,13 @@ for key in test_keys:
 print(f"Average accuracy: {sum(accuracy)/len(accuracy)}")
 
 print("Saving model to pickle.")
-with open("model.pckl", "wb") as file:
+
+try:
+    name = sys.argv[2]
+except IndexError:
+    name = f"model_{sys.argv[1]}"
+
+with open(f"{name}.pckl", "wb") as file:
     pickle.dump(model, file)
 
-print("Model saved in 'model.pckl'.")
+print(f"Model saved in '{name}.pckl'.")
