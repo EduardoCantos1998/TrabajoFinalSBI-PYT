@@ -16,14 +16,23 @@ warnings.filterwarnings("ignore")
 print("Reading file.")
 try:
     if os.path.isfile(sys.argv[1]):
+        print(f"File found in {sys.argv[1]} succesfully.")
         protein = sys.argv[1]
     else:
+        print(f"Downloading {sys.argv[1]} from the RCSB Database.")
         pdb_url = f"https://files.rcsb.org/download/{sys.argv[1]}.pdb"
-        os.mkdir(f"Prediction_{sys.argv[1]}")
+        try:
+            os.mkdir(f"Prediction_{sys.argv[1]}")
+        except FileExistsError:
+            pass 
         url_req.urlretrieve(pdb_url, f"Prediction_{sys.argv[1]}/protein.pdb")
+        print(f"Succesfully downloaded protein in Prediction_{sys.argv[1]}/protein.pdb.")
         protein = f"Prediction_{sys.argv[1]}/protein.pdb"
 except IndexError:
     raise IndexError("Please introduce a PDB file.")
+except urllib.error.HTTPError:
+    os.rmdir(f"Prediction_{sys.argv[1]}")
+    raise urllib.error.HTTPError(f"No protein with code {sys.argv[1]} has been found.")
 
 try:
     with open(sys.argv[2], "rb") as file:
@@ -31,12 +40,15 @@ try:
 except IndexError:
     print("No user model provided.")
 
+file_path = os.path.abspath(__file__)
+file_path = os.path.dirname(file_path)
+
 print("Loading model.")
-with open("model_6.pckl", "rb") as file:
+with open(f"{file_path}/model_6.pckl", "rb") as file:
     model_6 = pickle.load(file)
-with open("model_7.pckl", "rb") as file:
+with open(f"{file_path}/model_7.pckl", "rb") as file:
     model_7 = pickle.load(file)
-with open("model_8.pckl", "rb") as file:
+with open(f"{file_path}/model_8.pckl", "rb") as file:
     model_8 = pickle.load(file)
 
 print("Creating dataframe.")
