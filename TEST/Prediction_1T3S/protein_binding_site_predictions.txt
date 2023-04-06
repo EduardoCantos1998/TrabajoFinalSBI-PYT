@@ -1,0 +1,12 @@
+Amino_b acids that can form part of a binding site: ALA- 64, ASN- 68, PHE- 93, PRO-225, SER-226, MET-227, LEU-335, ALA-336, PRO-337, ILE-338
+
+BS predicted 1: ALA- 64
+
+BS predicted 2: ASN- 68
+
+BS predicted 3: PHE- 93 PRO-225
+
+BS predicted 4: SER-226 MET-227 LEU-335
+
+BS predicted 5: ALA-336 PRO-337 ILE-338
+

@@ -1,0 +1,12 @@
+Amino_b acids that can form part of a binding site: LYS- 12, LEU- 13, CYS- 41, PRO- 42, PRO- 43, ALA- 44, THR- 45, TYR- 46, ALA- 63, GLN- 64, ASN- 65, ALA- 66, TYR- 67, PHE- 74, THR- 75, GLY- 76, GLU- 77, ASN- 78, SER- 79, VAL- 91, ILE- 92, LEU- 93
+
+BS predicted 1: ILE- 92 LEU- 93
+
+BS predicted 2: LYS- 12 LEU- 13 CYS- 41 PRO- 42
+
+BS predicted 3: ASN- 65 ALA- 66 TYR- 67 PHE- 74 THR- 75
+
+BS predicted 4: GLY- 76 GLU- 77 ASN- 78 SER- 79 VAL- 91
+
+BS predicted 5: PRO- 43 ALA- 44 THR- 45 TYR- 46 ALA- 63 GLN- 64
+
