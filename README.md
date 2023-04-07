@@ -38,7 +38,9 @@ which downloads PDB (Protein Data Bank) and FASTA files for a list of protein co
 - `DATA.py`: this is used to extract the PDB codes from the BindingDB tsv and download into a folder in the same directory called "PDB". A zip of this can be found in the DATA folder.
 
 ## Requirements
-This is an Python script that particularly uses the following dependencies to take into account: biopython, df_maker, freesasa, mol2, numpy, pandas, scikit-learn, dssp.
+This is an Python script that particularly uses the following dependencies to take into account: biopython, df_maker, freesasa, mol2, numpy, pandas, scikit-learn and DSSP. 
+
+:warning: Particularly DSSP is meant to be ran in a **Ubuntu** or **Mac OSX**; at the moment of this release DSSP may not work in other distributions or operating systems.
 
 
 ## Command line Installation
@@ -56,6 +58,9 @@ python -m venv venv # Or name it as desired
 source venv/bin/activate
 pip install -r requirements.txt
 ```
+
+**To install DSSP follow these [instructions](https://ssbio.readthedocs.io/en/latest/instructions/dssp.html#installation-instructions-ubuntu).**
+
 
 ## Usage (Tutorial)
 This is the workflow for the general use of the tool:
