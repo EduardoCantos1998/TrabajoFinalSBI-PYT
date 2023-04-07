@@ -1,7 +1,7 @@
 # SBIXPYT: RF approach for PLI
 ![Results from 3IMX](3IMX_result.png?raw=true "Results from 3IMX")
 ## Table of Contents
-- [SBIXPYT: RF approach for PLI](#sbixpyt-rf-approach-for-ppi)
+- [SBIXPYT: RF approach for PLI](#sbixpyt-rf-approach-for-pli)
   - [Table of Contents](#table-of-contents)
   - [Introduction](#introduction)
   - [Training](#training)
