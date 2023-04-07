@@ -1,5 +1,6 @@
-# SBIXPYT: RF approach for PLI
+# SBIXPYT: RF approach for PPI
 ![Results from 3IMX](3IMX_result.png?raw=true "Results from 3IMX")
+Authors: Espitia S., Gary; Marco D., Alejandro; Cantos G., Eduardo
 ## Table of Contents
 - [SBIXPYT: RF approach for PLI](#sbixpyt-rf-approach-for-pli)
   - [Table of Contents](#table-of-contents)
@@ -111,11 +112,16 @@ And the following output files:
 
 Displayed in UCSFChimera:
 ![Results from 5T2W](5T2W_result.png?raw=true "prediction in blue")
+
 _**Fig. 1**: This is an visualization of the results, being beige the local sequence; being blue the prediction and red the XFC ligand for this interaction._
 
 ## [Theory](theory.md)
 ## Result Analysis
 The models were trained with different weights for the positive binding site value. This was necessary since the data for the binding sites was unbalanced in favor of the negative value for binding sites. We obtained 4 main models. The main models are the ones with a weight of 6 and 7, and an accuracy of 86.11% and 76.41% respectively. They obtained the highest accuracy while training, but also gave the best predictions during our own visual testing. The other two models have a weight of 8 and 10, with an accuracy of 66.65% and 60% respectively. These last two models had a really low accuracy, and they didn’t prove to be useful when predicting the binding site. We can see that the optimal weight is around 6. A weight of 5 would have been too low, since 6 is already giving really few positive binding sites results. We encourage the user to train the model with a lower weight if predictions are unfitting. There might be some cases where the prediction might be too poor or too generous. For situations like this one it would then be best to develop a new model and use it in their prediction. When the weight is not specified, it predicts all the atoms are not binding sites. This also resulted in a 95% accuracy, which came as a surprise since we know that all the proteins have a binding site. This is what leads us to generate different models with different weights (Fig. 2).
+
+![Model accuracy v. weight](results_graph.jpeg?raw=true "Model accuracy in weight")
+
+_**Fig. 2**: We can observe that as the weight increases, the accuracy also does as well. For weights lower than 6 we did observe that the accuracy was higher, but that didn’t correspond to better results. We observed the optimum weight to be around 6._
 
 ## [License](LICENSE)
 
