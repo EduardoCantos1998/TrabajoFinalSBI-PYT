@@ -1,6 +1,7 @@
 # SBIXPYT: RF approach for PPI
+**Authors**: Espitia S., Gary; Marco D., Alejandro; Cantos G., Eduardo
 ![Results from 3IMX](3IMX_result.png?raw=true "Results from 3IMX")
-Authors: Espitia S., Gary; Marco D., Alejandro; Cantos G., Eduardo
+
 ## Table of Contents
 - [SBIXPYT: RF approach for PLI](#sbixpyt-rf-approach-for-pli)
   - [Table of Contents](#table-of-contents)
