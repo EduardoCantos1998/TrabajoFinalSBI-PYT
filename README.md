@@ -1,5 +1,7 @@
 # SBIXPYT: RF approach for PPI
+
 **Authors**: Espitia S., Gary; Marco D., Alejandro; Cantos G., Eduardo
+
 ![Results from 3IMX](3IMX_result.png?raw=true "Results from 3IMX")
 
 ## Table of Contents
