@@ -1,5 +1,5 @@
 biopython==1.81
-freesasa==2.2.0.post3
+freesasa==2.2.0
 numpy==1.24.2
 pandas==1.5.3
 scikit-learn==1.2.2
