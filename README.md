@@ -31,6 +31,8 @@ which downloads PDB (Protein Data Bank) and FASTA files for a list of protein co
 - `mol2pdb.py`: Extracts the IDs from each folder and retrieves the pdb file from [RCSB](https://files.rcsb.org/).
 - `df_maker.py`: extracts features (coordinates, aminoacid, binding atom, entropy, charge, hidrophobicity, secundary structure, solvent accessible surface area(SASA), b-factor, phi and psi angles and alpha-carbon distance). betacarbons; and generates a pandas dataframe and converts them to integers.
 - `dictionary_pickler.py`: it iterates the proteins to generate a dataframe using `df_maker.py`; and keeps them in a dictionary. It could be considered the first selection step because we create a sample from the database (5020).
+- `DATA.py`: this is used to extract the PDB codes from the BindingDB tsv and download into a folder in the same directory called "PDB". A zip of this can be found in the DATA folder.
+
 ## Requirements
 This is an Python script that particularly uses the following dependencies to take into account: biopython, df_maker, freesasa, mol2, numpy, pandas, scikit-learn, dssp.
 
