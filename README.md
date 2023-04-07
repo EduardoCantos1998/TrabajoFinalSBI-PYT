@@ -36,6 +36,7 @@ which downloads PDB (Protein Data Bank) and FASTA files for a list of protein co
 ## Requirements
 This is an Python script that particularly uses the following dependencies to take into account: biopython, df_maker, freesasa, mol2, numpy, pandas, scikit-learn, dssp.
 
+
 ## Command line Installation
 
 ```bash
@@ -114,19 +115,23 @@ _**Fig. 1**: This is an visualization of the results, being beige the local sequ
 
 ## [Theory](theory.md)
 ## Result Analysis
-WIP
+The models were trained with different weights for the positive binding site value. This was necessary since the data for the binding sites was unbalanced in favor of the negative value for binding sites. We obtained 4 main models. The main models are the ones with a weight of 6 and 7, and an accuracy of 86.11% and 76.41% respectively. They obtained the highest accuracy while training, but also gave the best predictions during our own visual testing. The other two models have a weight of 8 and 10, with an accuracy of 66.65% and 60% respectively. These last two models had a really low accuracy, and they didn’t prove to be useful when predicting the binding site. We can see that the optimal weight is around 6. A weight of 5 would have been too low, since 6 is already giving really few positive binding sites results. We encourage the user to train the model with a lower weight if predictions are unfitting. There might be some cases where the prediction might be too poor or too generous. For situations like this one it would then be best to develop a new model and use it in their prediction. When the weight is not specified, it predicts all the atoms are not binding sites. This also resulted in a 95% accuracy, which came as a surprise since we know that all the proteins have a binding site. This is what leads us to generate different models with different weights (Fig. 2).
 
 ## [License](LICENSE)
 
 ## References
-1. Das S, Chakrabarti S. Classification and prediction of protein–protein interaction interface using machine learning algorithm. Sci Rep. 2021 Jan 19;11(1):1761. 
-2. Jamasb AR, Day B, Cangea C, Liò P, Blundell TL. Deep Learning for Protein–Protein Interaction Site Prediction. In: Cecconi D, editor. Proteomics Data Analysis [Internet]. New York, NY: Springer US; 2021 [cited 2023 Apr 5]. p. 263–88. (Methods in Molecular Biology). Available from: https://doi.org/10.1007/978-1-0716-1641-3_16
-3. Kabsch W, Sander C. Dictionary of protein secondary structure: Pattern recognition of hydrogen-bonded and geometrical features. Biopolymers. 1983 Dec;22(12):2577–637. 
-4. Mahesh B. Machine Learning Algorithms -A Review. 2019. 
-5. Casadio R, Martelli PL, Savojardo C. Machine learning solutions for predicting protein–protein interactions. WIREs Comput Mol Sci [Internet]. 2022 Nov [cited 2023 Apr 5];12(6). Available from: https://onlinelibrary.wiley.com/doi/10.1002/wcms.1618
-6. Ma W, Bao W, Cao Y, Yang B, Chen Y. Prediction of Protein-Protein Interaction Based on Deep Learning Feature Representation and Random Forest. In: Huang DS, Jo KH, Li J, Gribova V, Premaratne P, editors. Intelligent Computing Theories and Application. Cham: Springer International Publishing; 2021. p. 654–62. (Lecture Notes in Computer Science). 
-7. Šikić M, Tomić S, Vlahoviček K. Prediction of Protein–Protein Interaction Sites in Sequences and 3D Structures by Random Forests. Stormo GD, editor. PLoS Comput Biol. 2009 Jan 30;5(1):e1000278. 
-8. Raza K. Protein features identification for machine learning-based prediction of protein-protein interactions [Internet]. Bioinformatics; 2017 May [cited 2023 Apr 5]. Available from: http://biorxiv.org/lookup/doi/10.1101/137257
-9. Kandel J, Tayara H, Chong KT. PUResNet: prediction of protein-ligand binding sites using deep residual neural network. Journal of Cheminformatics. 2021 Sep 8;13(1):65. 
-10. Ho TK. Random decision forests. In: Proceedings of 3rd International Conference on Document Analysis and Recognition. 1995. p. 278–82 vol.1. 
-11. Pedregosa F, Varoquaux G, Gramfort A, Michel V, Thirion B, Grisel O, et al. Scikit-learn: Machine Learning in Python. Journal of Machine Learning Research. 2011;12(85):2825–30. 
+1. Pedregosa F, Varoquaux G, Gramfort A, Michel V, Thirion B, Grisel O, et al. Scikit-learn: Machine Learning in Python. Journal of Machine Learning Research. 2011;12(85):2825–30. 
+2. Desaphy J, Bret G, Rognan D, Kellenberger E. sc-PDB: a 3D-database of ligandable binding sites—10 years on. Nucleic Acids Research. 2015 Jan 28;43(D1):D399–404. 
+3. Ho TK. Random decision forests. In: Proceedings of 3rd International Conference on Document Analysis and Recognition. 1995. p. 278–82 vol.1. 
+4. Kandel J, Tayara H, Chong KT. PUResNet: prediction of protein-ligand binding sites using deep residual neural network. Journal of Cheminformatics. 2021 Sep 8;13(1):65. 
+5. Raza K. Protein features identification for machine learning-based prediction of protein-protein interactions [Internet]. Bioinformatics; 2017 May [cited 2023 Apr 5]. Available from: http://biorxiv.org/lookup/doi/10.1101/137257
+6. Šikić M, Tomić S, Vlahoviček K. Prediction of Protein–Protein Interaction Sites in Sequences and 3D Structures by Random Forests. Stormo GD, editor. PLoS Comput Biol. 2009 Jan 30;5(1):e1000278. 
+7. Ma W, Bao W, Cao Y, Yang B, Chen Y. Prediction of Protein-Protein Interaction Based on Deep Learning Feature Representation and Random Forest. In: Huang DS, Jo KH, Li J, Gribova V, Premaratne P, editors. Intelligent Computing Theories and Application. Cham: Springer International Publishing; 2021. p. 654–62. (Lecture Notes in Computer Science). 
+8. pickle — Python object serialization [Internet]. Python documentation. [cited 2023 Apr 6]. Available from: https://docs.python.org/3/library/pickle.html
+9. Casadio R, Martelli PL, Savojardo C. Machine learning solutions for predicting protein–protein interactions. WIREs Comput Mol Sci [Internet]. 2022 Nov [cited 2023 Apr 5];12(6). Available from: https://onlinelibrary.wiley.com/doi/10.1002/wcms.1618
+10. Mahesh B. Machine Learning Algorithms -A Review. 2019. 
+11. Kabsch W, Sander C. Dictionary of protein secondary structure: Pattern recognition of hydrogen-bonded and geometrical features. Biopolymers. 1983 Dec;22(12):2577–637. 
+12. Jamasb AR, Day B, Cangea C, Liò P, Blundell TL. Deep Learning for Protein–Protein Interaction Site Prediction. In: Cecconi D, editor. Proteomics Data Analysis [Internet]. New York, NY: Springer US; 2021 [cited 2023 Apr 5]. p. 263–88. (Methods in Molecular Biology). Available from: https://doi.org/10.1007/978-1-0716-1641-3_16
+13. Das S, Chakrabarti S. Classification and prediction of protein–protein interaction interface using machine learning algorithm. Sci Rep. 2021 Jan 19;11(1):1761. 
+14. ChEMBL Database [Internet]. [cited 2023 Apr 7]. Available from: https://www.ebi.ac.uk/chembl/
+15. 3.3. Metrics and scoring: quantifying the quality of predictions [Internet]. scikit-learn. [cited 2023 Apr 6]. Available from: https://scikit-learn/stable/modules/model_evaluation.html
